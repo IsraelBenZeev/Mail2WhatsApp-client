@@ -1,6 +1,5 @@
 import type { FC } from 'react';
 import { BoxMessages } from './features/Chat/BoxMessages';
-
 export const App: FC = () => {
   return (
     <div>
