@@ -11,22 +11,61 @@ export const useSignUpUser = () => {
 
   const signUpUser = async (email: string, password: string) => {
     try {
+      toastId.current = toast.loading('מתחבר לשרת, אנא המתן...', {
+        position: 'top-center',
+        closeOnClick: true,
+        rtl: true,
+      });
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
       });
       console.log('data: ', data);
       console.log('error: ', error);
-      
+
       if (error) {
-        console.log('enter to errror');
+        toast.update(toastId.current!, {
+          render: error.message,
+          type: 'error',
+          isLoading: false,
+          autoClose: 2000,
+        });
+        console.log('enter to error');
         console.error('Error signing up:', error.message);
         return null;
       }
-      if (data.user.identities.length > 0) {
-        console.log('נשלח מייל לאימות');
-      } else if (data.user.identities.length === 0) {
-        console.log('משתמש קיים כבר במערכת');
+
+      const user = data.user;
+      const createdAt = new Date(user.created_at).getTime();
+      const confirmationSentAt = user.confirmation_sent_at
+        ? new Date(user.confirmation_sent_at).getTime()
+        : createdAt; // fallback
+      const diffSeconds = (confirmationSentAt - createdAt) / 1000;
+
+      // משתמש חדש שנרשם עכשיו
+      if (!user.user_metadata.email_verified && diffSeconds <= 5) {
+        toast.update(toastId.current!, {
+          render: 'ברוכים הבאים! נשלח מייל לאימות, בדוק את תיבת הדואר שלך.',
+          type: 'success',
+          isLoading: false,
+          autoClose: 4000,
+        });
+        // משתמש קיים שלא אושר
+      } else if (!user.user_metadata.email_verified && diffSeconds > 5) {
+        toast.update(toastId.current!, {
+          render: 'משתמש קיים שלא אושר, נשלח מייל אימות נוסף.',
+          type: 'info',
+          isLoading: false,
+          autoClose: 4000,
+        });
+        // משתמש קיים ומאושר
+      } else {
+        toast.update(toastId.current!, {
+          render: 'מייל כבר קיים ומאומת. ניתן להתחבר כעת.',
+          type: 'info',
+          isLoading: false,
+          autoClose: 4000,
+        });
       }
     } catch (err: any) {
       console.error('Unexpected error:', err);
@@ -39,8 +78,30 @@ export const useSignUpUser = () => {
       return null;
     }
   };
-
   return { signUpUser };
+};
+export const signInWithGoogle = async () => {
+  console.log("pressed");
+  
+  try {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        queryParams: { prompt: 'select_account' }, // ⚡ כאן חשוב
+      },
+    });
+
+    if (error) {
+      console.error('Google sign-in error:', error.message);
+      return;
+    }
+
+    console.log('Google sign-in data:', data);
+    // data.url – כאן תוכל להפנות את המשתמש ל־redirect אם נדרש
+    // data.session – מכיל את ה-token החדש
+  } catch (err) {
+    console.error('Unexpected error:', err);
+  }
 };
 
 export const signInUser = async (email: string, password: string) => {

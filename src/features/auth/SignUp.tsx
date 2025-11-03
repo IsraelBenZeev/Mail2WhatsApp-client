@@ -1,6 +1,6 @@
 import { useState, useEffect, type FC } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSignUpUser } from '../../utils/serviceAuth';
+import { signInWithGoogle, useSignUpUser } from '../../utils/serviceAuth';
 // import { Toast } from '../../ui/Tost';
 
 export const Signup: FC = () => {
@@ -94,6 +94,7 @@ export const Signup: FC = () => {
           {/* כפתור Google */}
           <button
             type="button"
+            onClick={signInWithGoogle}
             className="w-full bg-gray-900 text-white font-semibold py-3 rounded-lg hover:bg-gray-700 transition-all border border-gray-600 flex items-center justify-center gap-3"
           >
             המשך עם Google
