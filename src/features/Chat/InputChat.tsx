@@ -1,19 +1,16 @@
 import { useEffect, useState, type FC } from 'react';
 import { LuSendHorizontal } from 'react-icons/lu';
-import { sendMessage } from '../../utils/service';
+import { sendMessage } from '../../utils/serviceAuth';
 import type { MessageType } from '../../types/MessageType';
 import { FiLoader } from 'react-icons/fi';
+import type { StatusType } from '../../types/StatusType';
 
 type InputChatProps = {
   value: string;
   setValue: React.Dispatch<React.SetStateAction<string>>;
   setMessages: React.Dispatch<React.SetStateAction<MessageType[]>>;
-  setStatus: React.Dispatch<
-    React.SetStateAction<
-      'idle' | 'sending' | 'sent' | 'loading' | 'success' | 'error'
-    >
-  >;
-  status: 'idle' | 'sending' | 'sent' | 'loading' | 'success' | 'error';
+  setStatus: React.Dispatch<React.SetStateAction<StatusType>>;
+  status: StatusType;
 };
 export const InputChat: FC<InputChatProps> = ({
   value,

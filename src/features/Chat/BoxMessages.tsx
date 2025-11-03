@@ -2,14 +2,13 @@ import { useState } from 'react';
 import { InputChat } from './InputChat';
 import { MessageItem } from './MessageItem';
 import type { MessageType } from '../../types/MessageType';
+import type { StatusType } from '../../types/StatusType';
 
 export const BoxMessages = () => {
   const [value, setValue] = useState<string>('');
   const [responseLLm, setResponseLLm] = useState<string>('');
   const [messagesOwn, setMessagesOwn] = useState<MessageType[]>([]);
-  const [status, setStatus] = useState<
-    'idle' | 'sending' | 'sent' | 'loading' | 'success' | 'error'
-  >('idle');
+  const [status, setStatus] = useState<StatusType>('idle');
   console.log('value:', value);
 
   return (
