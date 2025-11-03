@@ -1,43 +1,31 @@
 import { useState, useEffect, type FC } from 'react';
-import { data, useNavigate } from 'react-router-dom';
-import { signUpUser } from '../../utils/serviceAuth';
-import { Toast } from '../../ui/Tost';
+import { useNavigate } from 'react-router-dom';
+import { useSignUpUser } from '../../utils/serviceAuth';
+// import { Toast } from '../../ui/Tost';
 
 export const Signup: FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
   const [status, setStatus] = useState<
     'idle' | 'sending' | 'sent' | 'loading' | 'success' | 'error'
-  >('success');
-  const [showToast, setShowToast] = useState(false);
+  >('idle');
+  const { signUpUser } = useSignUpUser();
+  // console.log('status: ', status);
 
   const navigate = useNavigate();
-
-  // הצגת טוסט לפי סטטוס
-  useEffect(() => {
-    if (status === 'success' || status === 'error') {
-      setShowToast(true);
-      const timer = setTimeout(() => {
-        setShowToast(false);
-        if (status === 'success') {
-          // אפשר לנווט למקום אחר אחרי הצלחה
-          // navigate('/login');
-        }
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [status, navigate]);
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     console.log(password, email);
-    if (email && password) {
-      signUpUser(email, password, setStatus);
+    if (!email || !password) {
+      console.error('Email and password are required');
+      return;
     }
+    signUpUser(email.trim(), password.trim());
   };
   return (
     <div className="w-full max-w-md">
       {/* Toast הודעות */}
-      {true && <Toast status={status} setShowToast={setShowToast} />}
+      {/* {showToast && <Toast status={status} setShowToast={setShowToast} />} */}
 
       {/* כרטיס ההרשמה */}
       <div className="bg-gray-800 rounded-2xl shadow-2xl p-8 border border-gray-700 ">
@@ -50,7 +38,7 @@ export const Signup: FC = () => {
         </div>
 
         {/* טופס הרשמה */}
-        <form onSubmit={handleSubmit} className="space-y-5 bred">
+        <form onSubmit={handleSubmit} className="space-y-5">
           {/* שדה אימייל */}
           <div>
             <label
