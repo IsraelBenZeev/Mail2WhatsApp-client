@@ -6,18 +6,18 @@ import {
 } from 'react-router-dom';
 
 import { AppLayout } from './ui/AppLayout';
-import { Signup } from './features/auth/SignUp';
-import { Login } from './features/auth/SignIn';
+import { SignInOAuth } from './features/auth/SignInOAuth';
 import { Flip, ToastContainer } from 'react-toastify';
+import { BoxMessages } from './features/Chat/BoxMessages';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <AppLayout />,
     children: [
-      { index: true, element: <Navigate to="/login" replace /> },
-      { path: '/signup', element: <Signup /> },
-      { path: '/login', element: <Login /> },
+      { index: true, element: <Navigate to="/SignInOAuth" replace /> },
+      { path: '/SignInOAuth', element: <SignInOAuth /> },
+      { path: '/chat', element: <BoxMessages /> },
     ],
   },
 ]);

@@ -1,6 +1,6 @@
 import { useEffect, useState, type FC } from 'react';
 import { LuSendHorizontal } from 'react-icons/lu';
-import { sendMessage } from '../../utils/serviceAuth';
+import { sendMessage } from '../../hooks/serviceAuth';
 import type { MessageType } from '../../types/MessageType';
 import { FiLoader } from 'react-icons/fi';
 import type { StatusType } from '../../types/StatusType';

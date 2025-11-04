@@ -3,6 +3,7 @@ import { InputChat } from './InputChat';
 import { MessageItem } from './MessageItem';
 import type { MessageType } from '../../types/MessageType';
 import type { StatusType } from '../../types/StatusType';
+import { useUser } from '../../context/UserContext';
 
 export const BoxMessages = () => {
   const [value, setValue] = useState<string>('');
@@ -10,10 +11,13 @@ export const BoxMessages = () => {
   const [messagesOwn, setMessagesOwn] = useState<MessageType[]>([]);
   const [status, setStatus] = useState<StatusType>('idle');
   console.log('value:', value);
+  const { user, initCurrentUser } = useUser();
+  console.log('user: ', user);
 
   return (
     <div className="flex flex-col justify-end border gap-1 border-black px-2 py-1 w-full h-screen">
-      <div className='overflow-y-auto'>
+      <h1>{user?.email}</h1>
+      <div className="overflow-y-auto">
         {messagesOwn.map((msg, index) => (
           <MessageItem
             key={index}
