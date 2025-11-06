@@ -52,6 +52,7 @@ export const InputChat: FC<InputChatProps> = ({
           type="text"
           className="w-full block border-none outline-none text-right text-xs"
           onKeyDown={handleKeyDown}
+          autoFocus
         />
         <LuSendHorizontal
           className="rotate-180"

@@ -1,9 +1,7 @@
 import { type FC } from 'react';
 import { FcGoogle } from 'react-icons/fc';
-import { FaGithub, FaApple, FaFacebook } from 'react-icons/fa';
+import { FaGithub } from 'react-icons/fa';
 import { useAuth } from '../../hooks/serviceAuth';
-import { useUser } from '../../context/UserContext';
-// import { signInWithProvider } from '../../utils/serviceAuth';
 
 export const SignInOAuth: FC = () => {
   const { signInWithProvider } = useAuth();
@@ -35,13 +33,13 @@ export const SignInOAuth: FC = () => {
           </button>
 
           {/* כפתור Apple */}
-          <button
+          {/* <button
             type="button"
             className="w-full bg-black text-white font-semibold py-3 rounded-lg hover:bg-gray-900 transition-all border border-gray-700 flex items-center justify-center gap-3 shadow-sm hover:shadow-md"
           >
             <FaApple className="w-5 h-5" />
             המשך עם Apple
-          </button>
+          </button> */}
 
           {/* כפתור GitHub */}
           <button
@@ -54,13 +52,13 @@ export const SignInOAuth: FC = () => {
           </button>
 
           {/* כפתור Facebook */}
-          <button
+          {/* <button
             type="button"
             className="w-full bg-blue-600 text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition-all border border-blue-500 flex items-center justify-center gap-3 shadow-sm hover:shadow-md"
           >
             <FaFacebook className="w-5 h-5" />
             המשך עם Facebook
-          </button>
+          </button> */}
         </div>
       </div>
     </div>

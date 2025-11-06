@@ -2,11 +2,10 @@ import axios from 'axios';
 import { supabase } from '../utils/supabase-client';
 import { addMessageAssistant } from '../utils/manageMessages';
 import type { MessageType } from '../types/MessageType';
-import { useUser } from '../context/UserContext';
 
 const BASE_URL = import.meta.env.VITE_BASE_API_URL;
 export const useAuth = () => {
-  const { user, initCurrentUser } = useUser();
+  // const { user, initCurrentUser } = useUser();
   const signInWithProvider = async (
     provider: 'google' | 'github' | 'facebook'
   ) => {
@@ -14,7 +13,7 @@ export const useAuth = () => {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: provider,
         options: {
-          redirectTo: 'http://localhost:5173/chat',
+          redirectTo: "http://localhost:5173/chat",
           queryParams: { prompt: 'select_account' },
         },
       });
@@ -23,7 +22,9 @@ export const useAuth = () => {
         console.error('sign-in error:', error.message);
         return;
       }
-      initCurrentUser();
+      
+      // console.log("data: ", data);
+      // initCurrentUser();
 
       // data.url – כאן תוכל להפנות את המשתמש ל־redirect אם נדרש
       // data.session – מכיל את ה-token החדש

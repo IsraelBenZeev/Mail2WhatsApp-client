@@ -5,6 +5,7 @@ type UserData = {
   email: string;
   name?: string;
   avatar_url?: string;
+  id: string;
 } | null;
 
 type UserContextType = {
@@ -23,6 +24,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   const [user, setUser] = useState<UserData>(null);
 
   const initCurrentUser = async () => {
+    console.log('enter init');
+
     const { data } = await supabase.auth.getSession();
     console.log('data: ', data);
 
@@ -35,14 +38,16 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
         email: u.email!,
         name: u.user_metadata?.full_name,
         avatar_url: u.user_metadata?.avatar_url,
+        id: u.id,
       });
       return {
         email: u.email!,
         name: u.user_metadata?.full_name,
         avatar_url: u.user_metadata?.avatar_url,
+        id: u.id,
       };
     } else {
-      console.log('data is null');
+      console.log('data on user is null');
     }
     return null;
   };

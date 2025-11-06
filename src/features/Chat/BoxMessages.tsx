@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { InputChat } from './InputChat';
 import { MessageItem } from './MessageItem';
 import type { MessageType } from '../../types/MessageType';
@@ -13,6 +13,10 @@ export const BoxMessages = () => {
   console.log('value:', value);
   const { user, initCurrentUser } = useUser();
   console.log('user: ', user);
+
+  useEffect(() => {
+    initCurrentUser();
+  }, []);
 
   return (
     <div className="flex flex-col justify-end border gap-1 border-black px-2 py-1 w-full h-screen">
