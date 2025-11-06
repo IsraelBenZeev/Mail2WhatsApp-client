@@ -1,4 +1,4 @@
-import type { FC } from 'react';
+import { use, useEffect, type FC } from 'react';
 import {
   createBrowserRouter,
   Navigate,
@@ -9,6 +9,7 @@ import { AppLayout } from './ui/AppLayout';
 import { SignInOAuth } from './features/auth/SignInOAuth';
 import { Flip, ToastContainer } from 'react-toastify';
 import { BoxMessages } from './features/Chat/BoxMessages';
+import { useUser } from './context/UserContext';
 
 const router = createBrowserRouter([
   {
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
   },
 ]);
 export const App: FC = () => {
+  const { initCurrentUser } = useUser();
+  useEffect(() => {
+    initCurrentUser();
+  }, []);
   return (
     <>
       <RouterProvider router={router}></RouterProvider>

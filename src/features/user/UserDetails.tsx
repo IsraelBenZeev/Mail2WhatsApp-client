@@ -12,7 +12,6 @@ export const UserDetails: FC = () => {
   };
 
   const { user } = useUser();
-  console.log('user?.avatar_url: ', user?.avatar_url);
 
   return (
     <div onClick={toggleDrawer} color="inherit">

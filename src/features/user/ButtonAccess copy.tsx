@@ -7,13 +7,13 @@ export const ButtonAccess: FC = () => {
   const { authorize_user_and_save_tokens } = useTokens();
 
   return (
-    <div className="h-full flex flex-col items-center justify-start md:justify-center  bg-gradient-to-br from-blue-50 to-blue-100 p-4 md:p-6 py-8 overflow-y-auto">
+    <div className="min-h-screen w-full flex items-start justify-center bg-gradient-to-br from-blue-50 to-blue-100 p-3 sm:p-4 overflow-y-auto">
       <div className="w-full max-w-md sm:max-w-2xl bg-white rounded-2xl shadow-2xl p-4 sm:p-6 md:p-10">
         {/* Header Section */}
         <div className="flex justify-center mb-4 sm:mb-6">
-          {/* <div className="flex items-center justify-center w-14 h-14 sm:w-20 sm:h-20 bg-blue-primary rounded-full">
+          <div className="flex items-center justify-center w-14 h-14 sm:w-20 sm:h-20 bg-blue-primary rounded-full">
             <MdEmail className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
-          </div> */}
+          </div>
         </div>
 
         {/* Security Information */}
@@ -25,9 +25,7 @@ export const ButtonAccess: FC = () => {
                 הנתונים שלך מאובטחים
               </h3>
               <p className="text-gray-700 text-xs sm:text-sm leading-relaxed">
-                אנחנו משתמשים בפרוטוקול OAuth 2.0 המאובטח של Google. איננו
-                שומרים את סיסמת המייל שלך, ויש לנו גישה מוגבלת בלבד לנתונים
-                הנדרשים לשירות.
+                אנחנו משתמשים בפרוטוקול OAuth 2.0 המאובטח של Google. איננו שומרים את סיסמת המייל שלך, ויש לנו גישה מוגבלת בלבד לנתונים הנדרשים לשירות.
               </p>
             </div>
           </div>
@@ -42,13 +40,12 @@ export const ButtonAccess: FC = () => {
           <ul className="space-y-2">
             {[
               'קריאת הודעות מתיבת הדואר שלך',
+              'סינון והעברה של הודעות ווצאפ בלבד',
               'שליחת עדכונים על הודעות חדשות',
             ].map((text, i) => (
               <li key={i} className="flex items-start gap-3">
                 <MdCheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                <span className="text-gray-700 text-sm sm:text-base">
-                  {text}
-                </span>
+                <span className="text-gray-700 text-sm sm:text-base">{text}</span>
               </li>
             ))}
           </ul>
@@ -67,8 +64,7 @@ export const ButtonAccess: FC = () => {
             >
               הגדרות חשבון Google שלך
             </a>
-            . אנחנו לא משתפים את המידע שלך עם צדדים שלישיים ופועלים בהתאם
-            למדיניות הפרטיות של Google.
+            . אנחנו לא משתפים את המידע שלך עם צדדים שלישיים ופועלים בהתאם למדיניות הפרטיות של Google.
           </p>
         </div>
 
@@ -78,10 +74,10 @@ export const ButtonAccess: FC = () => {
             console.log('pressed access');
             authorize_user_and_save_tokens();
           }}
-          className="w-full bg-gradient-to-r from-blue-primary to-blue-secondary hover:from-blue-secondary hover:to-blue-primary text-white font-bold text-base sm:text-lg py-1 px-2 sm:py-4 rounded-xl shadow-md hover:shadow-lg transform hover:scale-[1.02] transition-all duration-300 flex items-center justify-center gap-2"
+          className="w-full bg-gradient-to-r from-blue-primary to-blue-secondary hover:from-blue-secondary hover:to-blue-primary text-white font-bold text-base sm:text-lg py-3 sm:py-4 rounded-xl shadow-md hover:shadow-lg transform hover:scale-[1.02] transition-all duration-300 flex items-center justify-center gap-2"
         >
-          {/* <FaGoogle className="w-5 h-5 sm:w-6 sm:h-6" /> */}
-          <span>אשר גישה אל חשבון הג'ימייל</span>
+          <FaGoogle className="w-5 h-5 sm:w-6 sm:h-6" />
+          <span>התחבר עם Google</span>
         </button>
       </div>
     </div>

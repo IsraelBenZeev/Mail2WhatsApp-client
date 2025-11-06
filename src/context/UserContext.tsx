@@ -27,13 +27,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     console.log('enter init');
 
     const { data } = await supabase.auth.getSession();
-    console.log('data: ', data);
 
     if (data.session?.user) {
       const u = data.session.user;
-      console.log('data: ', data);
-      console.log('u: ', u);
-
       setUser({
         email: u.email!,
         name: u.user_metadata?.full_name,

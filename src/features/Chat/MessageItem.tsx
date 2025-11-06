@@ -1,16 +1,69 @@
 import type { FC } from 'react';
+import { useState } from 'react';
+import { MdContentCopy } from 'react-icons/md';
+
 type MessageItemProps = {
   label: string;
   time: string;
   isOwn: boolean;
 };
+
 export const MessageItem: FC<MessageItemProps> = ({ label, time, isOwn }) => {
+  const [showCopy, setShowCopy] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(label);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  // פורמט השעה ללא שניות
+  const formatTime = (timeStr: string) => {
+    if (!timeStr) return '';
+    const parts = timeStr.split(':');
+    if (parts.length >= 2) {
+      return `${parts[0]}:${parts[1]}`;
+    }
+    return timeStr;
+  };
+
   return (
     <div
-      className={`border bg-blue-primary px-1 rounded-br-lg rounded-bl-lg ${isOwn ? 'rounded-tr-lg rounded-tl-none' : 'rounded-tl-lg rounded-tr-none'}`}
+      className={`flex mb-3 ${isOwn ? 'justify-end' : 'justify-start'}`}
+      onMouseEnter={() => setShowCopy(true)}
+      onMouseLeave={() => setShowCopy(false)}
     >
-      <p className="text-xs text-white">{label}</p>
-      <p className="text-xs text-white">{time}</p>
+      <div
+        className={`relative max-w-[70%] px-3 py-[0.17rem] rounded-2xl shadow-md ${
+          isOwn
+            ? 'bg-blue-500 text-white rounded-br-sm'
+            : 'bg-gray-100 text-gray-800 rounded-bl-sm'
+        }`}
+      >
+        <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">
+          {label}
+        </p>
+        <div className="flex items-center justify-end gap-2 mt-1">
+          <span className="text-[10px] opacity-70">
+            {formatTime(time)}
+          </span>
+          {showCopy && (
+            <button
+              onClick={handleCopy}
+              className="opacity-70 hover:opacity-100 transition-opacity"
+              title={copied ? 'הועתק!' : 'העתק הודעה'}
+            >
+              <MdContentCopy className="text-xs" />
+            </button>
+          )}
+        </div>
+        {copied && (
+          <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded">
+            הועתק!
+          </span>
+        )}
+      </div>
     </div>
   );
 };

@@ -34,8 +34,7 @@
 .loader {
   width: 25px;
   aspect-ratio: 4;
-  --_g: no-repeat radial-gradient(circle closest-side, #efeaea 90%, #cfc5c500);
-  /* --_g: no-repeat radial-gradient(circle closest-side, #000 90%, #0000); */
+  --_g: no-repeat radial-gradient(circle closest-side, #3b82f6 90%, #3b82f600);
   background:
     var(--_g) 0% 50%,
     var(--_g) 50% 50%,
@@ -62,4 +61,23 @@
       calc(100% / 3) 100%,
       calc(100% / 3) 0%;
   }
+}
+
+/* סגנון עבור סרגל הגלילה */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
