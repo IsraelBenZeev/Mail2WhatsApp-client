@@ -1,24 +1,32 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { Logo } from './Logo.tsx';
 import { UserDetails } from '../features/user/UserDetails.tsx';
-import { ButtonAccess } from '../features/user/ButtonAccess.tsx';
+import { AccessGmailAccount } from '../features/user/AccessGmailAccount.tsx';
 import { useUser } from '../context/UserContext.tsx';
-import { useTokens } from '../hooks/serviceTokens.ts';
+// import { useTokens } from '../hooks/serviceTokens.ts';
 import { useEffect, useRef, useState } from 'react';
 export const AppLayout = () => {
-  const [isToken, setIsToken] = useState<boolean>(false);
-  const { user } = useUser();
-  const { get_token } = useTokens();
+  // const [isToken, setIsToken] = useState<boolean>(false);
+  const { user, isToken, initIsToken } = useUser();
+  const navigate = useNavigate();
+  // const { get_token } = useTokens();
   useEffect(() => {
     if (!user) return;
-    console.log("user: ",user);
-    
+    console.log('user: ', user);
+    initIsToken();
     const fetchTokens = async () => {
-      setIsToken((await get_token(user.id)) || false);
-      console.log("isToken: ", isToken);
+      // setIsToken((await get_token(user.id)) || false);
+      // console.log("isToken: ", isToken);
     };
     fetchTokens();
   }, [user]);
+  useEffect(() => {
+    console.log("isToken: ",isToken);
+    
+    if (!user) navigate('/SignInOAuth');
+    if (user && !isToken) navigate('/access-gmail-account');
+    if (user && isToken) navigate('/chat');
+  }, [isToken, user]);
 
   return (
     <div className="h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex flex-col items-center justify-center p-3">
@@ -26,15 +34,7 @@ export const AppLayout = () => {
         {user && <UserDetails />}
         <Logo />
       </header>
-      {/* {true && ( */}
-      {user && !isToken && (
-        <div className="w-full max-w-4xl overflow-hidden rounded-lg">
-          <ButtonAccess />
-        </div>
-      )}
-      {/* {user && isToken && <ButtonAccess />} */}
       <main className="flex-[8] w-full max-w-4xl overflow-hidden">
-        {/* {false && <Outlet />} */}
         <Outlet />
       </main>
     </div>

@@ -10,12 +10,8 @@ export const BoxMessages = () => {
   const [responseLLm, setResponseLLm] = useState<string>('');
   const [messagesOwn, setMessagesOwn] = useState<MessageType[]>([]);
   const [status, setStatus] = useState<StatusType>('idle');
-  const {initCurrentUser } = useUser();
-
-  useEffect(() => {
-    initCurrentUser();
-  }, []);
-
+  // const { user, isToken } = useUser();
+  
   return (
     <div className="flex flex-col w-full h-full bg-gradient-to-b from-gray-50 to-gray-100 rounded-lg">
       <div className="flex-1 overflow-y-auto px-4 py-6 scroll-smooth">

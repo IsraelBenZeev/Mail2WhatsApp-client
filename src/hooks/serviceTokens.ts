@@ -24,9 +24,6 @@ export const useTokens = () => {
       .select('access_token')
       .eq('id', userId)
       .single();
-    console.log('access_token:', data?.access_token);
-    console.log('data:', data);
-
     if (error) {
       console.error(error);
       return null;

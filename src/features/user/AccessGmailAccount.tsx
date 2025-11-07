@@ -3,7 +3,7 @@ import { useTokens } from '../../hooks/serviceTokens';
 import { MdEmail, MdSecurity, MdLock, MdCheckCircle } from 'react-icons/md';
 import { FaGoogle } from 'react-icons/fa';
 
-export const ButtonAccess: FC = () => {
+export const AccessGmailAccount: FC = () => {
   const { authorize_user_and_save_tokens } = useTokens();
 
   return (
