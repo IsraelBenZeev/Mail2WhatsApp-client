@@ -6,15 +6,14 @@ const BASE_URL = import.meta.env.VITE_BASE_API_URL;
 export const sendMessage = async (
   message: string,
   setStatus: React.Dispatch<
-    React.SetStateAction<
-      'idle' | 'sending' | 'sent' | 'loading' | 'success' | 'error'
-    >
+    React.SetStateAction<'idle' | 'sending' | 'sent' | 'loading' | 'success' | 'error'>
   >,
-  setMessages: React.Dispatch<React.SetStateAction<MessageType[]>>
+  setMessages: React.Dispatch<React.SetStateAction<MessageType[]>>,
+  userId?: string
 ) => {
   try {
     setStatus('loading');
-    const response = await axios.post<MessageType>(`${BASE_URL}/llm/ask-llm`, {
+    const response = await axios.post<MessageType>(`${BASE_URL}/llm/ask-llm/${userId}`, {
       message,
     });
     setStatus('success');

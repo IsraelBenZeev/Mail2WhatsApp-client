@@ -1,13 +1,9 @@
-import {
-  type Dispatch,
-  type FC,
-  type KeyboardEvent,
-  type SetStateAction,
-} from 'react';
+import { type Dispatch, type FC, type KeyboardEvent, type SetStateAction } from 'react';
 import { LuSendHorizontal } from 'react-icons/lu';
 import { sendMessage } from '../../utils/service';
 import type { MessageType } from '../../types/MessageType';
 import type { StatusType } from '../../types/StatusType';
+import { useUser } from '../../context/UserContext';
 
 type InputChatProps = {
   value: string;
@@ -23,6 +19,7 @@ export const InputChat: FC<InputChatProps> = ({
   setStatus,
   status,
 }) => {
+  const { user } = useUser();
   const addMessageUser = () => {
     setMessages((prevMessages) => [
       ...prevMessages,
@@ -42,7 +39,7 @@ export const InputChat: FC<InputChatProps> = ({
         return;
       }
       addMessageUser();
-      sendMessage(value, setStatus, setMessages);
+      sendMessage(value, setStatus, setMessages, user?.id);
     }
   };
   return (
@@ -66,7 +63,7 @@ export const InputChat: FC<InputChatProps> = ({
               return;
             }
             addMessageUser();
-            sendMessage(value, setStatus, setMessages);
+            sendMessage(value, setStatus, setMessages, user?.id);
           }}
         />
       </div>
