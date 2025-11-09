@@ -18,9 +18,21 @@ export const MessageItem: FC<MessageItemProps> = ({ label, time, isOwn }) => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // פורמט השעה ללא שניות
   const formatTime = (timeStr: string) => {
     if (!timeStr) return '';
+
+    // אם זה פורמט ISO (2025-11-09T10:09)
+    if (timeStr.includes('T')) {
+      const date = new Date(timeStr);
+      return date.toLocaleTimeString('he-IL', {
+        timeZone: 'Asia/Jerusalem',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      });
+    }
+
+    // אם זה כבר בפורמט שעה רגיל
     const parts = timeStr.split(':');
     if (parts.length >= 2) {
       return `${parts[0]}:${parts[1]}`;
@@ -45,9 +57,7 @@ export const MessageItem: FC<MessageItemProps> = ({ label, time, isOwn }) => {
           {label}
         </p>
         <div className="flex items-center justify-end gap-2 mt-1">
-          <span className="text-[10px] opacity-70">
-            {formatTime(time)}
-          </span>
+          <span className="text-[10px] opacity-70">{formatTime(time)}</span>
           {showCopy && (
             <button
               onClick={handleCopy}
