@@ -31,6 +31,8 @@ export const App: FC = () => {
   }, []);
   useEffect(() => {
     if (!user) return;
+    console.log('user: ', user);
+
     initIsToken();
   }, [user]);
   return (

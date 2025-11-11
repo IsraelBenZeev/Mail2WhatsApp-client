@@ -4,9 +4,10 @@ export const signInWithProvider = async (
 ) => {
   try {
     const { error } = await supabase.auth.signInWithOAuth({
+      
       provider: provider,
       options: {
-        redirectTo: 'http://localhost:5173/chat',
+        redirectTo: 'http://localhost:5173/',
         queryParams: { prompt: 'select_account' },
       },
     });

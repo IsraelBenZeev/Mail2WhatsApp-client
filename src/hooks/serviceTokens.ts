@@ -20,7 +20,7 @@ export const useTokens = () => {
   };
   const get_token = async (userId: string) => {
     const { data, error } = await supabase
-      .from('profiles')
+      .from('user_tokens')
       .select('access_token')
       .eq('id', userId)
       .single();
