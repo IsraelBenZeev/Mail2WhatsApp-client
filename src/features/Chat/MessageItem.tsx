@@ -32,7 +32,6 @@ export const MessageItem: FC<MessageItemProps> = ({ label, time, isOwn }) => {
       });
     }
 
-    // אם זה כבר בפורמט שעה רגיל
     const parts = timeStr.split(':');
     if (parts.length >= 2) {
       return `${parts[0]}:${parts[1]}`;

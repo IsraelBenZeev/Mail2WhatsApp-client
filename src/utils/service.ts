@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { addMessageAssistant } from '../utils/manageMessages';
 import type { MessageType } from '../types/MessageType';
+import type { Dispatch } from 'react';
 
 const BASE_URL = import.meta.env.VITE_BASE_API_URL;
 export const sendMessage = async (
@@ -29,3 +30,13 @@ export const sendMessage = async (
     console.error('Error sending message:', error);
   }
 };
+export const getMessages = async (userId: string,setMessages: Dispatch<React.SetStateAction<MessageType[]>>) => {
+  try {
+    const response = await axios.get<MessageType[]>(`${BASE_URL}/llm/get-messages/${userId}`);
+    console.log('Fetched messages successfully:', response.data);
+    setMessages(response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching messages:', error);
+  }
+};  
