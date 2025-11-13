@@ -1,10 +1,9 @@
 import { Outlet, useNavigate } from 'react-router-dom';
 import { Logo } from './Logo.tsx';
 import { UserDetails } from '../features/user/UserDetails.tsx';
-import { AccessGmailAccount } from '../features/user/AccessGmailAccount.tsx';
 import { useUser } from '../context/UserContext.tsx';
 // import { useTokens } from '../hooks/serviceTokens.ts';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect } from 'react';
 export const AppLayout = () => {
   // const [isToken, setIsToken] = useState<boolean>(false);
   const { user, isToken, initIsToken } = useUser();

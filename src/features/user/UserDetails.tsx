@@ -1,7 +1,6 @@
 import { useState, type FC } from 'react';
 import { useUser } from '../../context/UserContext';
 import { SideMenu } from './SideBar';
-import { ImageUser } from './ImageUser';
 
 export const UserDetails: FC = () => {
   const [open, setOpen] = useState(false);
