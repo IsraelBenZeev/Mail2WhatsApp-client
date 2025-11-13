@@ -4,17 +4,13 @@ export const useAuth = () => {
   // const navigate = useNavigate();
   const signInWithProvider = async (provider: 'google' | 'github' | 'facebook') => {
     try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { error } = await supabase.auth.signInWithOAuth({
         provider: provider,
         options: {
           redirectTo: import.meta.env.VITE_HOST,
           queryParams: { prompt: 'select_account' },
         },
       });
-      if (data.url) {
-        // נודד ל־OAuth provider (supabase החזיר את כתובת ה־redirect)
-        window.location.href = data.url;
-      }
 
       if (error) {
         console.error('sign-in error:', error.message);
