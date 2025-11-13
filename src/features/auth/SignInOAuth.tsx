@@ -1,11 +1,11 @@
 import { type FC } from 'react';
 import { FcGoogle } from 'react-icons/fc';
 import { FaGithub } from 'react-icons/fa';
-import { signInWithProvider } from '../../hooks/serviceAuth';
+import { useAuth } from '../../hooks/serviceAuth';
 
 export const SignInOAuth: FC = () => {
   // const { user, initCurrentUser } = useUser();
-
+  const { signInWithProvider } = useAuth();
   return (
     <div className="w-full max-w-md">
       {/* כרטיס ההרשמה */}

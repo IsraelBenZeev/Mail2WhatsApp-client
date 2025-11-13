@@ -6,7 +6,7 @@ import {
   FaSignOutAlt,
 } from 'react-icons/fa';
 import { type FC, useEffect, useState } from 'react';
-import { signOut } from '../../hooks/serviceAuth';
+import { useAuth } from '../../hooks/serviceAuth';
 
 type SideMenuProps = {
   open: boolean;
@@ -15,7 +15,7 @@ type SideMenuProps = {
 
 export const SideMenu: FC<SideMenuProps> = ({ toggleDrawer, open }) => {
   const [showLogoutPopup, setShowLogoutPopup] = useState(false);
-
+const { signOut } = useAuth();
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape' && open) {

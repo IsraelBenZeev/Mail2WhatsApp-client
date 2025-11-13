@@ -27,47 +27,47 @@ export const UserProvider: FC<{ children: React.ReactNode }> = ({ children }) =>
   const [user, setUser] = useState<UserData>(null);
   const [isToken, setIsToken] = useState<boolean>(false);
   const { get_token } = useTokens();
-  const initCurrentUser = async () => {
-    console.log('enter init');
+    const initCurrentUser = async () => {
+      console.log('enter init');
 
-    const { data } = await supabase.auth.getSession();
+      const { data } = await supabase.auth.getSession();
 
-    if (data.session?.user) {
-      const u = data.session.user;
-      setUser({
-        email: u.email!,
-        name: u.user_metadata?.full_name,
-        avatar_url: u.user_metadata?.avatar_url,
-        id: u.id,
-      });
-      return {
-        email: u.email!,
-        name: u.user_metadata?.full_name,
-        avatar_url: u.user_metadata?.avatar_url,
-        id: u.id,
-      };
-    } else {
-      console.log('data on user is null');
-    }
-    return null;
-  };
-  useEffect(() => {
-    // האזנה לשינויי התחברות
-    const { data: subscription } = supabase.auth.onAuthStateChange(async (_, session) => {
-      if (session?.user) {
-        const u = session.user;
+      if (data.session?.user) {
+        const u = data.session.user;
         setUser({
           email: u.email!,
           name: u.user_metadata?.full_name,
           avatar_url: u.user_metadata?.avatar_url,
           id: u.id,
         });
-        console.log('✅ משתמש התחבר:', u.email);
+        return {
+          email: u.email!,
+          name: u.user_metadata?.full_name,
+          avatar_url: u.user_metadata?.avatar_url,
+          id: u.id,
+        };
       } else {
-        setUser(null);
-        console.log('🚪 המשתמש נותק');
+        console.log('data on user is null');
       }
-    });
+      return null;
+    };
+    useEffect(() => {
+      // האזנה לשינויי התחברות
+      const { data: subscription } = supabase.auth.onAuthStateChange(async (_, session) => {
+        if (session?.user) {
+          const u = session.user;
+          setUser({
+            email: u.email!,
+            name: u.user_metadata?.full_name,
+            avatar_url: u.user_metadata?.avatar_url,
+            id: u.id,
+          });
+          console.log('✅ משתמש התחבר:', u.email);
+        } else {
+          setUser(null);
+          console.log('🚪 המשתמש נותק');
+        }
+      });
 
     // ביטול ההאזנה בעת יציאה מהקומפוננטה
     return () => {
