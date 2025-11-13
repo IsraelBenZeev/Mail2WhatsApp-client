@@ -7,7 +7,7 @@ export const signInWithProvider = async (
       
       provider: provider,
       options: {
-        redirectTo: 'http://localhost:5173/',
+        redirectTo: import.meta.env.VITE_HOST,
         queryParams: { prompt: 'select_account' },
       },
     });
