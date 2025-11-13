@@ -1,9 +1,5 @@
-import {  useEffect, type FC } from 'react';
-import {
-  createBrowserRouter,
-  Navigate,
-  RouterProvider,
-} from 'react-router-dom';
+import { useEffect, type FC } from 'react';
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 
 import { AppLayout } from './ui/AppLayout';
 import { SignInOAuth } from './features/auth/SignInOAuth';
@@ -27,6 +23,8 @@ const router = createBrowserRouter([
 export const App: FC = () => {
   const { user, initCurrentUser, initIsToken } = useUser();
   useEffect(() => {
+    console.log('VITE_HOST:', import.meta.env.VITE_HOST);
+
     initCurrentUser();
   }, []);
   useEffect(() => {
