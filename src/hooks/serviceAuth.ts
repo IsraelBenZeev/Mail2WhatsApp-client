@@ -3,11 +3,15 @@ import { supabase } from '../utils/supabase-client';
 export const useAuth = () => {
   // const navigate = useNavigate();
   const signInWithProvider = async (provider: 'google' | 'github' | 'facebook') => {
+    console.log('import.meta.env.VITE_HOST_URL: ', import.meta.env.VITE_HOST_URL);
+
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: provider,
         options: {
-          redirectTo: import.meta.env.VITE_HOST,
+          redirectTo: import.meta.env.VITE_HOST_URL,
+          // redirectTo: import.meta.env.VITE_HOST_URL + '/auth/signin-callback',
+          // redirectTo: "http://localhost:5173/auth/'wellback",
           queryParams: { prompt: 'select_account' },
         },
       });
