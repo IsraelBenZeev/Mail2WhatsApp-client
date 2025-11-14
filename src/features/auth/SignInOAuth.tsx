@@ -12,12 +12,8 @@ export const SignInOAuth: FC = () => {
       <div className="bg-gray-800 rounded-2xl shadow-2xl p-8 border border-gray-700 ">
         {/* כותרת */}
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-white mb-2">
-            בחר את הספק כדי להתחבר לחשבון שלך.
-          </h1>
-          <p className="text-gray-400 text-sm">
-            הירשם עכשיו והתחל להשתמש בשירות
-          </p>
+          <h1 className="text-2xl font-bold text-white mb-2">בחר את הספק כדי להתחבר לחשבון שלך.</h1>
+          <p className="text-gray-400 text-sm">הירשם עכשיו והתחל להשתמש בשירות</p>
         </div>
 
         {/* כפתורי כניסה */}
@@ -30,6 +26,13 @@ export const SignInOAuth: FC = () => {
           >
             <FcGoogle className="w-5 h-5" />
             המשך עם Google
+          </button>
+          <button
+            onClick={() => {
+              console.log('import.meta.env.VITE_HOST_URL: ', import.meta.env.VITE_HOST_URL);
+            }}
+          >
+            Test Env
           </button>
 
           {/* כפתור Apple */}
