@@ -31,6 +31,8 @@ const sendTokenSigninToServer = async (token: string) => {
       },
       body: JSON.stringify({ token }),
     });
+    console.log(response);
+    
   } catch (error) {
     console.error('Error sending token to server:', error);
   }
