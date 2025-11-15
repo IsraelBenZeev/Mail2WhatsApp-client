@@ -27,13 +27,7 @@ export const SignInOAuth: FC = () => {
             <FcGoogle className="w-5 h-5" />
             המשך עם Google
           </button>
-          <button
-            onClick={() => {
-              console.log('import.meta.env.VITE_HOST_URL: ', import.meta.env.VITE_HOST_URL);
-            }}
-          >
-            Test Env
-          </button>
+
 
           {/* כפתור Apple */}
           {/* <button
