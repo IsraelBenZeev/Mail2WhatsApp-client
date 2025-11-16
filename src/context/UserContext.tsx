@@ -22,26 +22,25 @@ const UserContext = createContext<UserContextType>({
   isToken: false,
   initIsToken: async () => {},
 });
-const sendTokenSigninToServer = async (token: string) => {
-  try {
-    const response = await fetch(`${import.meta.env.VITE_BASE_API_URL}/Auth/token-signin`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ token }),
-    });
-    console.log(response);
-    
-  } catch (error) {
-    console.error('Error sending token to server:', error);
-  }
-};
+// const sendTokenSigninToServer = async (token: string) => {
+//   try {
+//     const response = await fetch(`${import.meta.env.VITE_BASE_API_URL}/Auth/signin-callback`, {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json',
+//       },
+//       body: JSON.stringify({ token }),
+//     });
+//     console.log(response);
+//   } catch (error) {
+//     console.error('Error sending token to server:', error);
+//   }
+// };
 
 export const UserProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<UserData>(null);
   const [isTokenAccessMail, setIsTokenAccessMail] = useState<boolean>(false);
-  const [isTokenSentServer, setIsTokenSentServer] = useState(false);
+  // const [isTokenSentServer, setIsTokenSentServer] = useState(false);
   const { get_token } = useTokens();
   const initCurrentUser = async () => {
     console.log('enter init');
@@ -71,11 +70,11 @@ export const UserProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const { data: subscription } = supabase.auth.onAuthStateChange(async (_, session) => {
       if (session) {
         console.log('session', session);
-        const token = session.access_token;
-        if (token && !isTokenSentServer) {
-          await sendTokenSigninToServer(token);
-          setIsTokenSentServer(true);
-        }
+        // const token = session.access_token;
+        // if (token && !isTokenSentServer) {
+        //   await sendTokenSigninToServer(token);
+        //   setIsTokenSentServer(true);
+        // }
       }
       if (session?.user) {
         const u = session.user;
@@ -88,7 +87,7 @@ export const UserProvider: FC<{ children: ReactNode }> = ({ children }) => {
         console.log('✅ משתמש התחבר:', u.email);
       } else {
         setUser(null);
-        setIsTokenSentServer(false);
+        // setIsTokenSentServer(false);
         console.log('🚪 המשתמש נותק');
       }
     });
