@@ -36,33 +36,27 @@ export const AppLayout = () => {
   //   fetchSession();
   // }, []);
   useEffect(() => {
-    const fetchSession = async () => {
-      const { data, error } = await supabase.auth.getSession();
+    // האזן לשינויים ב-auth state במקום query חד-פעמי
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth event:', event, session);
 
-      if (error) {
-        console.log('Error fetching session:', error.message);
+      if (!session) {
         navigate('/SignInOAuth');
         return;
       }
 
-      console.log('data: ', data);
-
-      // אל תנווט אם אין session בכלל
-      if (!data.session) {
-        navigate('/SignInOAuth');
-        return;
-      }
-
-      // רק אם יש session - תחליט לאן לנווט
       if (!isToken) {
         navigate('/access-gmail-account');
       } else {
         navigate('/chat');
       }
-    };
+    });
 
-    fetchSession();
-  }, []); // dependency array ריק - ירוץ רק פעם אחת
+    // Cleanup
+    return () => {
+      authListener?.subscription.unsubscribe();
+    };
+  }, [isToken]);
 
   return (
     <div className="h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex flex-col items-center justify-center p-3">
