@@ -21,18 +21,15 @@ const router = createBrowserRouter([
   },
 ]);
 export const App: FC = () => {
-  const { user, initCurrentUser, initIsToken } = useUser();
+  const { user } = useUser();
   useEffect(() => {
     console.log('VITE_HOST:', import.meta.env.VITE_HOST);
 
-    initCurrentUser();
   }, []);
   useEffect(() => {
     if (!user) return;
     console.log('user: ', user);
-
-    initIsToken();
-  }, [user]);
+    }, [user]);
   return (
     <>
       <RouterProvider router={router}></RouterProvider>
