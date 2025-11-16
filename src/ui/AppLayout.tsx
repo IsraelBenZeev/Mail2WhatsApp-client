@@ -56,7 +56,7 @@ export const AppLayout = () => {
     return () => {
       authListener?.subscription.unsubscribe();
     };
-  }, [isToken]);
+  }, []);
 
   return (
     <div className="h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex flex-col items-center justify-center p-3">
