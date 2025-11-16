@@ -17,43 +17,20 @@ export const AppLayout = () => {
     };
     fetchTokens();
   }, [user]);
-  // useEffect(() => {
-  //   const fetchSession = async () => {
-  //     const { data, error } = await supabase.auth.getSession();
-  //     if (error) {
-  //       navigate('/SignInOAuth');
-  //       console.log('Error fetching session:', error.message);
-  //       return;
-  //     }
-  //     console.log('data: ', data);
-  //     if (data.session && !isToken) navigate('/access-gmail-account');
-  //     if (data.session && isToken) navigate('/chat');
-
-  //     console.log('isToken: ', isToken);
-  //     if (!user) return;
-  //     console.log('user from appLayout: ', user);
-  //   };
-  //   fetchSession();
-  // }, []);
   useEffect(() => {
+    console.log('isToken: ', isToken);
+
     const fetchSession = async () => {
       const { data, error } = await supabase.auth.getSession();
-
       if (error) {
         console.log('Error fetching session:', error.message);
         navigate('/SignInOAuth');
         return;
       }
-
-      console.log('data: ', data);
-
-      // אל תנווט אם אין session בכלל
       if (!data.session) {
         navigate('/SignInOAuth');
         return;
       }
-
-      // רק אם יש session - תחליט לאן לנווט
       if (!isToken) {
         navigate('/access-gmail-account');
       } else {
@@ -62,7 +39,7 @@ export const AppLayout = () => {
     };
 
     fetchSession();
-  }, []); // dependency array ריק - ירוץ רק פעם אחת
+  }, [isToken]);
 
   return (
     <div className="h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex flex-col items-center justify-center p-3">
