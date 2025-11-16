@@ -1,15 +1,10 @@
-// import { useNavigate } from 'react-router-dom';
-// import { useNavigate } from 'react-router-dom';
 import { supabase } from '../utils/supabase-client';
 export const useAuth = () => {
-  // const navigate = useNavigate();
-  // const navigate = useNavigate();
   const signInWithProvider = async (provider: 'google' | 'github' | 'facebook') => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: provider,
         options: {
-          // redirectTo: import.meta.env.VITE_BASE_API_URL + '/Auth/signin-callback',
           redirectTo: `${import.meta.env.VITE_HOST}`,
         },
       });
