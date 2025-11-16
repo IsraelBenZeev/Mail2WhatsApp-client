@@ -1,4 +1,4 @@
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
 import { Logo } from './Logo.tsx';
 import { UserDetails } from '../features/user/UserDetails.tsx';
 import { useUser } from '../context/UserContext.tsx';
@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { useTokens } from '../hooks/serviceTokens.ts';
 export const AppLayout = () => {
   const [isToken, setIsToken] = useState<boolean>(false);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const { get_token } = useTokens();
   const { user } = useUser();
   useEffect(() => {
