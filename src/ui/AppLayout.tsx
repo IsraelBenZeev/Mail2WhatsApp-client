@@ -1,62 +1,88 @@
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { Logo } from './Logo.tsx';
 import { UserDetails } from '../features/user/UserDetails.tsx';
 import { useUser } from '../context/UserContext.tsx';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useTokens } from '../hooks/serviceTokens.ts';
 import { supabase } from '../utils/supabase-client.ts';
+
 export const AppLayout = () => {
   const [isToken, setIsToken] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const navigate = useNavigate();
+  const location = useLocation();
   const { get_token } = useTokens();
   const { user } = useUser();
+  const hasNavigated = useRef(false);
+
+  // בדיקת טוקנים כאשר יש משתמש
   useEffect(() => {
     if (!user) return;
     const fetchTokens = async () => {
-      setIsToken((await get_token(user.id)) || false);
+      const token = await get_token(user.id);
+      setIsToken(token || false);
     };
     fetchTokens();
-  }, [user]);
-  // useEffect(() => {
-  //   const fetchSession = async () => {
-  //     const { data, error } = await supabase.auth.getSession();
-  //     if (error) {
-  //       navigate('/SignInOAuth');
-  //       console.log('Error fetching session:', error.message);
-  //       return;
-  //     }
-  //     console.log('data: ', data);
-  //     if (data.session && !isToken) navigate('/access-gmail-account');
-  //     if (data.session && isToken) navigate('/chat');
+  }, [user, get_token]);
 
-  //     console.log('isToken: ', isToken);
-  //     if (!user) return;
-  //     console.log('user from appLayout: ', user);
-  //   };
-  //   fetchSession();
-  // }, []);
+  // ניווט חד-פעמי בהתבסס על session וטוקנים
   useEffect(() => {
-    // האזן לשינויים ב-auth state במקום query חד-פעמי
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log('Auth event:', event, session);
+    const checkAuthAndNavigate = async () => {
+      // מונע ניווטים מרובים
+      if (hasNavigated.current) return;
 
-      if (!session) {
-        navigate('/SignInOAuth');
+      const { data, error } = await supabase.auth.getSession();
+
+      if (error) {
+        console.log('Error fetching session:', error.message);
+        if (location.pathname !== '/SignInOAuth') {
+          hasNavigated.current = true;
+          navigate('/SignInOAuth');
+        }
+        setIsLoading(false);
         return;
       }
 
-      if (!isToken) {
-        navigate('/access-gmail-account');
-      } else {
-        navigate('/chat');
-      }
-    });
+      console.log('Session data: ', data);
+      console.log('isToken: ', isToken);
+      console.log('Current path: ', location.pathname);
 
-    // Cleanup
-    return () => {
-      authListener?.subscription.unsubscribe();
+      // אם אין session ולא בדף התחברות
+      if (!data.session && location.pathname !== '/SignInOAuth') {
+        hasNavigated.current = true;
+        navigate('/SignInOAuth');
+        setIsLoading(false);
+        return;
+      }
+
+      // אם יש session
+      if (data.session && user) {
+        // אם אין טוקן ולא בדף הרשאות Gmail
+        if (!isToken && location.pathname !== '/access-gmail-account') {
+          hasNavigated.current = true;
+          navigate('/access-gmail-account');
+        }
+        // אם יש טוקן ולא בדף צ'אט
+        else if (isToken && location.pathname !== '/chat') {
+          hasNavigated.current = true;
+          navigate('/chat');
+        }
+      }
+
+      setIsLoading(false);
     };
-  }, []);
+
+    checkAuthAndNavigate();
+  }, [user, isToken, navigate, location.pathname]);
+
+  // מציג loader בזמן טעינה
+  if (isLoading) {
+    return (
+      <div className="h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center">
+        <div className="text-white text-xl">טוען...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex flex-col items-center justify-center p-3">
