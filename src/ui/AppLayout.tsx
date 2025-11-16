@@ -1,12 +1,13 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { Logo } from './Logo.tsx';
 import { UserDetails } from '../features/user/UserDetails.tsx';
 import { useUser } from '../context/UserContext.tsx';
 import { useEffect, useState } from 'react';
 import { useTokens } from '../hooks/serviceTokens.ts';
+import { supabase } from '../utils/supabase-client.ts';
 export const AppLayout = () => {
   const [isToken, setIsToken] = useState<boolean>(false);
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const { get_token } = useTokens();
   const { user } = useUser();
   useEffect(() => {
@@ -17,13 +18,22 @@ export const AppLayout = () => {
     fetchTokens();
   }, [user]);
   useEffect(() => {
-    console.log('isToken: ', isToken);
-    if (!user) return;
-    console.log('user from appLayout: ', user);
+    const fetchSession = async () => {
+      const { data, error } = await supabase.auth.getSession();
+      if (error) {
+        console.log('Error fetching session:', error.message);
+        return;
+      }
+      console.log('data: ', data);
+      if (!user) navigate('/SignInOAuth');
+      if (user && !isToken) navigate('/access-gmail-account');
+      if (user && isToken) navigate('/chat');
 
-    // if (!user) navigate('/SignInOAuth');
-    // if (user && !isToken) navigate('/access-gmail-account');
-    // if (user && isToken) navigate('/chat');
+      console.log('isToken: ', isToken);
+      if (!user) return;
+      console.log('user from appLayout: ', user);
+    };
+    fetchSession();
   }, [isToken, user]);
 
   return (
