@@ -7,7 +7,7 @@ export const useTokens = () => {
   const authorize_user_and_save_tokens = async () => {
     try {
       const response = await axios.get(
-        `${BASE_URL}/oauth/authorize_gmail/${user?.id}`
+        `${BASE_URL}/isr/authorize_gmail/${user?.id}`
         // `${BASE_URL}/OAuth/authorize_gmail/${user?.id}`
       );
       const auth_gmail_url = response.data.auth_url;
