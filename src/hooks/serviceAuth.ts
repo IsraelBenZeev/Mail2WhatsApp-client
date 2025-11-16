@@ -8,7 +8,7 @@ export const useAuth = () => {
         provider: provider,
         options: {
           // redirectTo: import.meta.env.VITE_BASE_API_URL + '/Auth/signin-callback',
-          redirectTo: import.meta.env.VITE_HOST_URL,
+          redirectTo: `${import.meta.env.VITE_HOST}`,
         },
       });
 
