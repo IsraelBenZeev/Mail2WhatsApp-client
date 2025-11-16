@@ -22,9 +22,9 @@ export const AppLayout = () => {
   useEffect(() => {
     console.log("isToken: ",isToken);
     
-    if (!user) navigate('/SignInOAuth');
-    if (user && !isToken) navigate('/access-gmail-account');
-    if (user && isToken) navigate('/chat');
+    // if (!user) navigate('/SignInOAuth');
+    // if (user && !isToken) navigate('/access-gmail-account');
+    // if (user && isToken) navigate('/chat');
   }, [isToken, user]);
 
   return (
