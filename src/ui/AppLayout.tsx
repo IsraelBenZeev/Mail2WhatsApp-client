@@ -21,20 +21,20 @@ export const AppLayout = () => {
     const fetchSession = async () => {
       const { data, error } = await supabase.auth.getSession();
       if (error) {
+        navigate('/SignInOAuth');
         console.log('Error fetching session:', error.message);
         return;
       }
       console.log('data: ', data);
-      if (!user) navigate('/SignInOAuth');
-      if (user && !isToken) navigate('/access-gmail-account');
-      if (user && isToken) navigate('/chat');
+      if (data.session && !isToken) navigate('/access-gmail-account');
+      if (data.session && isToken) navigate('/chat');
 
       console.log('isToken: ', isToken);
       if (!user) return;
       console.log('user from appLayout: ', user);
     };
     fetchSession();
-  }, [isToken, user]);
+  }, []);
 
   return (
     <div className="h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex flex-col items-center justify-center p-3">
