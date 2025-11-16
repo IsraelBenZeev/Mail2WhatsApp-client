@@ -1,6 +1,8 @@
 // import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../utils/supabase-client';
 export const useAuth = () => {
+  const navigate = useNavigate();
   // const navigate = useNavigate();
   const signInWithProvider = async (provider: 'google' | 'github' | 'facebook') => {
     try {
@@ -20,7 +22,6 @@ export const useAuth = () => {
       console.error('Unexpected error:', err);
       return;
     }
-    
   };
 
   const signOut = async () => {

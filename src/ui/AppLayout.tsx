@@ -21,14 +21,13 @@ export const AppLayout = () => {
     const fetchTokens = async () => {
       const token = await get_token(user.id);
       setIsToken(token || false);
+      hasNavigated.current = false;
     };
     fetchTokens();
-  }, [user, get_token]);
+  }, [user]);
 
-  // ניווט חד-פעמי בהתבסס על session וטוקנים
   useEffect(() => {
     const checkAuthAndNavigate = async () => {
-      // מונע ניווטים מרובים
       if (hasNavigated.current) return;
 
       const { data, error } = await supabase.auth.getSession();
@@ -47,7 +46,6 @@ export const AppLayout = () => {
       console.log('isToken: ', isToken);
       console.log('Current path: ', location.pathname);
 
-      // אם אין session ולא בדף התחברות
       if (!data.session && location.pathname !== '/SignInOAuth') {
         hasNavigated.current = true;
         navigate('/SignInOAuth');
@@ -55,14 +53,11 @@ export const AppLayout = () => {
         return;
       }
 
-      // אם יש session
       if (data.session && user) {
-        // אם אין טוקן ולא בדף הרשאות Gmail
         if (!isToken && location.pathname !== '/access-gmail-account') {
           hasNavigated.current = true;
           navigate('/access-gmail-account');
         }
-        // אם יש טוקן ולא בדף צ'אט
         else if (isToken && location.pathname !== '/chat') {
           hasNavigated.current = true;
           navigate('/chat');

@@ -1,12 +1,7 @@
-import {
-  FaHome,
-  FaInfoCircle,
-  FaEnvelope,
-  FaTimes,
-  FaSignOutAlt,
-} from 'react-icons/fa';
+import { FaHome, FaInfoCircle, FaEnvelope, FaTimes, FaSignOutAlt } from 'react-icons/fa';
 import { type FC, useEffect, useState } from 'react';
 import { useAuth } from '../../hooks/serviceAuth';
+import { useNavigate } from 'react-router-dom';
 
 type SideMenuProps = {
   open: boolean;
@@ -15,7 +10,8 @@ type SideMenuProps = {
 
 export const SideMenu: FC<SideMenuProps> = ({ toggleDrawer, open }) => {
   const [showLogoutPopup, setShowLogoutPopup] = useState(false);
-const { signOut } = useAuth();
+  const navigate = useNavigate();
+  const { signOut } = useAuth();
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape' && open) {
@@ -37,11 +33,10 @@ const { signOut } = useAuth();
     setShowLogoutPopup(true);
   };
 
-  const handleLogoutConfirm = () => {
-    // כאן תוסיף את הלוגיקה של ההתנתקות
-    signOut();
+  const handleLogoutConfirm = async () => {
+    await signOut();
     setShowLogoutPopup(false);
-    toggleDrawer();
+    navigate(`/SignInOAuth`);
   };
 
   const handleLogoutCancel = () => {
@@ -141,12 +136,8 @@ const { signOut } = useAuth();
         {showLogoutPopup && (
           <div className="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center">
             <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-black border border-gray-700 rounded-lg shadow-2xl p-6 max-w-sm w-full mx-4">
-              <h3 className="text-xl font-semibold text-white text-center mb-4">
-                התנתקות
-              </h3>
-              <p className="text-gray-300 text-center mb-6">
-                האם אתה בטוח שברצונך להתנתק?
-              </p>
+              <h3 className="text-xl font-semibold text-white text-center mb-4">התנתקות</h3>
+              <p className="text-gray-300 text-center mb-6">האם אתה בטוח שברצונך להתנתק?</p>
               <div className="flex gap-3">
                 <button
                   onClick={handleLogoutCancel}
