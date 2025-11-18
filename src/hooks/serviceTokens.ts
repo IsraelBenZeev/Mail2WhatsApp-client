@@ -29,14 +29,15 @@ export const useTokens = () => {
       .from('user_tokens')
       .select('access_token')
       .eq('id', userId)
-      .single();
+      .maybeSingle();
+
+    console.log('data: ', data);
     if (error) {
-      console.error(error);
+      console.log('error: ', error);
       setStatusToken('failed');
       return null;
     }
     setStatusToken('success');
-
     return data?.access_token ? true : false;
   };
   return { authorize_user_and_save_tokens, get_token };

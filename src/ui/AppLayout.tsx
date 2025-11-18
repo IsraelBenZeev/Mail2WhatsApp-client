@@ -8,16 +8,13 @@ import { supabase } from '../utils/supabase-client.ts';
 
 export const AppLayout = () => {
   const [isToken, setIsToken] = useState<boolean>(false);
-  const [loadingDetails, setLoadingDetails] = useState<string>('');
   const [statusToken, setStatusToken] = useState<'idle' | 'loading' | 'success' | 'failed'>('idle');
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const navigate = useNavigate();
   const location = useLocation();
   const { get_token } = useTokens();
   const { user } = useUser();
   const hasNavigated = useRef(false);
 
-  // בדיקת טוקנים כאשר יש משתמש
   useEffect(() => {
     if (!user) return;
     const fetchTokens = async () => {
@@ -33,60 +30,43 @@ export const AppLayout = () => {
       if (hasNavigated.current) return;
 
       const { data, error } = await supabase.auth.getSession();
-
       if (error) {
         console.log('Error fetching session:', error.message);
-        if (location.pathname !== '/SignInOAuth') {
-          hasNavigated.current = true;
-          navigate('/SignInOAuth');
-        }
-        setIsLoading(false);
+        // if (location.pathname !== '/SignInOAuth') {
+        //   hasNavigated.current = true;
+        //   navigate('/SignInOAuth');
+        // }
+        // setIsLoading(false);
         return;
       }
-
-      console.log('Session data: ', data);
-      console.log('isToken: ', isToken);
-      console.log('Current path: ', location.pathname);
 
       if (!data.session && location.pathname !== '/SignInOAuth') {
         hasNavigated.current = true;
         navigate('/SignInOAuth');
-        setIsLoading(false);
-        setLoadingDetails('התחברות נדרשת');
         return;
       }
       if (data.session && user) {
-      if (statusToken === 'loading') {
-        setLoadingDetails('טוען הרשאות...');
-      } else if(statusToken === 'success') {
+        if (statusToken === 'loading') {
+        } else if (statusToken === 'success') {
           if (isToken && location.pathname !== '/chat') {
             hasNavigated.current = true;
 
             navigate('/chat');
-            setLoadingDetails("הנך מועבר לצ'אט");
           } else if (!isToken && location.pathname !== '/access-gmail-account') {
             hasNavigated.current = true;
             navigate('/access-gmail-account');
-            setLoadingDetails('גישה לחשבון Gmail נדרשת');
           }
         }
       }
-
-      setIsLoading(false);
     };
-
     checkAuthAndNavigate();
   }, [user, isToken, navigate, location.pathname]);
-  useEffect(() => {
-    console.log('loadingDetails: ', loadingDetails);
-  }, [loadingDetails]);
 
-  // מציג loader בזמן טעינה
-  if (isLoading) {
+  if (statusToken === 'loading') {
     return (
       <div className="flex-col gap-4 h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center">
         <div className="loader-loading"></div>
-        <div className="text-white text-xl">{loadingDetails || 'loading'}...</div>
+        <div className="text-white text-xl">טוען הרשאות...</div>
       </div>
     );
   }
