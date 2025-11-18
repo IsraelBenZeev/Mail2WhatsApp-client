@@ -34,7 +34,7 @@
   -moz-osx-font-smoothing: grayscale;
 }
 /* HTML: <div class="loader"></div> */
-.loader {
+.loader-chat {
   width: 25px;
   aspect-ratio: 4;
   --_g: no-repeat radial-gradient(circle closest-side, #3b82f6 90%, #3b82f600);
@@ -43,9 +43,9 @@
     var(--_g) 50% 50%,
     var(--_g) 100% 50%;
   background-size: calc(100% / 3) 100%;
-  animation: l7 1s infinite linear;
+  animation: l1 1s infinite linear;
 }
-@keyframes l7 {
+@keyframes l1 {
   33% {
     background-size:
       calc(100% / 3) 0%,
@@ -64,6 +64,24 @@
       calc(100% / 3) 100%,
       calc(100% / 3) 0%;
   }
+}
+/* HTML: <div class="loader"></div> */
+.loader-loading {
+  width: 55px;
+  aspect-ratio: 1;
+  --g1:conic-gradient(from  90deg at 3px  3px ,#0000 90deg,#fff 0);
+  --g2:conic-gradient(from -90deg at 22px 22px,#0000 90deg,#fff 0);
+  background:var(--g1),var(--g1),var(--g1), var(--g2),var(--g2),var(--g2);
+  background-size: 25px 25px;
+  background-repeat: no-repeat;
+  animation: l2 1.5s infinite;
+}
+@keyframes l2 {
+  0%   {background-position:0    0   ,0 100%,100% 100% }
+  25%  {background-position:100% 0   ,0 100%,100% 100% }
+  50%  {background-position:100% 0   ,0 0   ,100% 100% }
+  75%  {background-position:100% 0   ,0 0   ,0    100% }
+  100% {background-position:100% 100%,0 0   ,0    100% }
 }
 
 /* סגנון עבור סרגל הגלילה */

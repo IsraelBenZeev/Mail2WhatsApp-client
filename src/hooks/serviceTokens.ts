@@ -1,6 +1,7 @@
 import { useUser } from '../context/UserContext';
 import axios from 'axios';
 import { supabase } from '../utils/supabase-client';
+import type { Dispatch } from 'react';
 const BASE_URL = import.meta.env.VITE_BASE_API_URL;
 export const useTokens = () => {
   const { user } = useUser();
@@ -19,7 +20,11 @@ export const useTokens = () => {
       console.error('Unexpected error:', err);
     }
   };
-  const get_token = async (userId: string) => {
+  const get_token = async (
+    userId: string,
+    setStatusToken: Dispatch<React.SetStateAction<'idle' | 'loading' | 'success' | 'failed'>>
+  ) => {
+    setStatusToken('loading');
     const { data, error } = await supabase
       .from('user_tokens')
       .select('access_token')
@@ -27,8 +32,11 @@ export const useTokens = () => {
       .single();
     if (error) {
       console.error(error);
+      setStatusToken('failed');
       return null;
     }
+    setStatusToken('success');
+
     return data?.access_token ? true : false;
   };
   return { authorize_user_and_save_tokens, get_token };

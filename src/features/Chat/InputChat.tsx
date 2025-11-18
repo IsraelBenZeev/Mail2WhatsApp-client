@@ -44,7 +44,7 @@ export const InputChat: FC<InputChatProps> = ({
   };
   return (
     <div className="flex flex-col gap-2">
-      {status === 'loading' && <div className="self-start loader mb-2"></div>}
+      {status === 'loading' && <div className="self-start loader-chat mb-2"></div>}
       <div className="flex gap-2 w-full border border-gray-300 p-3 rounded-2xl bg-white shadow-sm hover:shadow-md transition-shadow">
         <input
           value={value}
