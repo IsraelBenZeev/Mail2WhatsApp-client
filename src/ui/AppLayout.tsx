@@ -2,7 +2,7 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { Logo } from './Logo.tsx';
 import { UserDetails } from '../features/user/UserDetails.tsx';
 import { useUser } from '../context/UserContext.tsx';
-import { useEffect, useState, useRef, use } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useTokens } from '../hooks/serviceTokens.ts';
 import { supabase } from '../utils/supabase-client.ts';
 
