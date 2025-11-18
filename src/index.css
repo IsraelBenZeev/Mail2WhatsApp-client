@@ -19,6 +19,9 @@
 .bred {
   @apply border-2 border-red-700;
 }
+.h-screen {
+  height: 100dvh;
+}
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
