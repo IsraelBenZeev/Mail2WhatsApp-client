@@ -27,40 +27,45 @@ export const AppLayout = () => {
 
   useEffect(() => {
     const checkAuthAndNavigate = async () => {
-      if (hasNavigated.current) return;
-
+      // 1. Check Session
       const { data, error } = await supabase.auth.getSession();
-      if (error) {
-        console.log('Error fetching session:', error.message);
-        // if (location.pathname !== '/SignInOAuth') {
-        //   hasNavigated.current = true;
-        //   navigate('/SignInOAuth');
-        // }
-        // setIsLoading(false);
+
+      if (error || !data.session) {
+        if (location.pathname !== '/SignInOAuth') {
+          navigate('/SignInOAuth');
+        }
         return;
       }
 
-      if (!data.session && location.pathname !== '/SignInOAuth') {
-        hasNavigated.current = true;
-        navigate('/SignInOAuth');
-        return;
-      }
+      // 2. If Session exists, wait for Token check
       if (data.session && user) {
-        if (statusToken === 'loading') {
-        } else if (statusToken === 'success') {
-          if (isToken && location.pathname !== '/chat') {
-            hasNavigated.current = true;
+        if (statusToken === 'idle' || statusToken === 'loading') {
+          // Do nothing, let the loader show
+          return;
+        }
 
-            navigate('/chat');
-          } else if (!isToken && location.pathname !== '/access-gmail-account') {
-            hasNavigated.current = true;
+        if (statusToken === 'success') {
+          if (isToken) {
+            if (location.pathname !== '/chat') {
+              navigate('/chat');
+            }
+          } else {
+            if (location.pathname !== '/access-gmail-account') {
+              navigate('/access-gmail-account');
+            }
+          }
+        } else if (statusToken === 'failed') {
+          // Fallback for failed token check - maybe treat as no token?
+          // For now, per plan, if failed we might want to let them retry or go to access-gmail
+          if (location.pathname !== '/access-gmail-account') {
             navigate('/access-gmail-account');
           }
         }
       }
     };
+
     checkAuthAndNavigate();
-  }, [user, isToken, navigate, location.pathname]);
+  }, [user, isToken, statusToken, navigate, location.pathname]);
 
   if (statusToken === 'loading') {
     return (
