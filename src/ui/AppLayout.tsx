@@ -2,83 +2,110 @@ import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { Logo } from './Logo.tsx';
 import { UserDetails } from '../features/user/UserDetails.tsx';
 import { useUser } from '../context/UserContext.tsx';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useTokens } from '../hooks/serviceTokens.ts';
 import { supabase } from '../utils/supabase-client.ts';
 
 export const AppLayout = () => {
   const [isToken, setIsToken] = useState<boolean>(false);
   const [statusToken, setStatusToken] = useState<'idle' | 'loading' | 'success' | 'failed'>('idle');
+  const [isCheckingAuth, setIsCheckingAuth] = useState<boolean>(true);
   const navigate = useNavigate();
   const location = useLocation();
   const { get_token } = useTokens();
   const { user } = useUser();
-  const hasNavigated = useRef(false);
 
-  useEffect(() => {
-    if (!user) return;
-    const fetchTokens = async () => {
-      const token = await get_token(user.id, setStatusToken);
-      setIsToken(token || false);
-      hasNavigated.current = false;
-    };
-    fetchTokens();
-  }, [user]);
-
+  // useEffect מאוחד לכל הלוגיקה
   useEffect(() => {
     const checkAuthAndNavigate = async () => {
-      // 1. Check Session
-      const { data, error } = await supabase.auth.getSession();
+      try {
+        // שלב 1: בדיקת Session
+        const { data, error } = await supabase.auth.getSession();
 
-      // Check if we are handling an OAuth callback (hash or query params)
-      const isAuthCallback = window.location.hash.includes('access_token') ||
-        window.location.hash.includes('type=recovery') ||
-        window.location.search.includes('code=');
+        // בדיקה אם אנחנו באמצע OAuth callback
+        const isAuthCallback =
+          window.location.hash.includes('access_token') ||
+          window.location.hash.includes('type=recovery') ||
+          window.location.search.includes('code=');
 
-      // If no session and NOT an auth callback, redirect to login
-      if ((error || !data.session) && !isAuthCallback) {
-        if (location.pathname !== '/SignInOAuth') {
-          navigate('/SignInOAuth');
-        }
-        return;
-      }
-
-      // If we are in an auth callback but no session yet, we wait.
-      // Supabase will process the hash and eventually update the session.
-      if (!data.session && isAuthCallback) {
-        return;
-      }
-
-      // 2. If Session exists, wait for Token check
-      if (data.session && user) {
-        if (statusToken === 'idle' || statusToken === 'loading') {
-          // Do nothing, let the loader show
+        // אם אין session ולא OAuth callback - נווט להתחברות
+        if ((error || !data.session) && !isAuthCallback) {
+          setIsCheckingAuth(false);
+          setStatusToken('idle');
+          if (location.pathname !== '/SignInOAuth') {
+            navigate('/SignInOAuth');
+          }
           return;
         }
 
-        if (statusToken === 'success') {
-          if (isToken) {
-            if (location.pathname !== '/chat') {
-              navigate('/chat');
+        // אם אנחנו ב-OAuth callback אבל עדיין אין session - נחכה
+        if (!data.session && isAuthCallback) {
+          setIsCheckingAuth(true);
+          console.log('ממתין ל-OAuth callback להסתיים...');
+          return;
+        }
+
+        // שלב 2: אם יש Session אבל אין עדיין User מה-Context - נחכה
+        if (data.session && !user) {
+          setIsCheckingAuth(true);
+          console.log('Session קיים, ממתין ל-User מה-Context...');
+          return;
+        }
+
+        // שלב 3: יש גם Session וגם User - בודקים טוקנים
+        if (data.session && user) {
+          // אם עדיין לא בדקנו טוקנים - נבדוק
+          if (statusToken === 'idle') {
+            console.log('בודק טוקנים עבור המשתמש:', user.id);
+            setStatusToken('loading');
+            const hasToken = await get_token(user.id, setStatusToken);
+            setIsToken(hasToken || false);
+            return; // נחכה ל-render הבא עם הסטטוס המעודכן
+          }
+
+          // אם אנחנו עדיין טוענים - נראה את מסך הטעינה
+          if (statusToken === 'loading') {
+            setIsCheckingAuth(true);
+            return;
+          }
+
+          // שלב 4: בדיקת טוקנים הסתיימה - ניווט לפי התוצאות
+          if (statusToken === 'success') {
+            setIsCheckingAuth(false);
+
+            if (isToken) {
+              // יש טוקן - נווט לצ'אט
+              console.log("נמצא טוקן, מנווט לצ'אט");
+              if (location.pathname !== '/chat') {
+                navigate('/chat');
+              }
+            } else {
+              // אין טוקן - נווט לדף הרשאות Gmail
+              console.log('לא נמצא טוקן, מנווט לדף הרשאות Gmail');
+              if (location.pathname !== '/access-gmail-account') {
+                navigate('/access-gmail-account');
+              }
             }
-          } else {
+          } else if (statusToken === 'failed') {
+            // בדיקת טוקנים נכשלה - נווט לדף הרשאות
+            setIsCheckingAuth(false);
+            console.log('בדיקת טוקנים נכשלה, מנווט לדף הרשאות Gmail');
             if (location.pathname !== '/access-gmail-account') {
               navigate('/access-gmail-account');
             }
           }
-        } else if (statusToken === 'failed') {
-          // Fallback for failed token check
-          if (location.pathname !== '/access-gmail-account') {
-            navigate('/access-gmail-account');
-          }
         }
+      } catch (err) {
+        console.error('שגיאה בבדיקת הרשאות:', err);
+        setIsCheckingAuth(false);
+        setStatusToken('failed');
       }
     };
 
     checkAuthAndNavigate();
-  }, [user, isToken, statusToken, navigate, location.pathname]);
+  }, [user, statusToken, navigate, location.pathname, get_token]);
 
-  if (statusToken === 'loading') {
+  if (statusToken === 'loading' || isCheckingAuth) {
     return (
       <div className="flex-col gap-4 h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center">
         <div className="loader-loading"></div>
