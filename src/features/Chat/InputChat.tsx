@@ -42,6 +42,7 @@ export const InputChat: FC<InputChatProps> = ({
     setValue('');
   };
   const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if(status === 'loading') return;
     if (event.key === 'Enter') {
       event.preventDefault();
       if (value.trim() === '') {
@@ -66,7 +67,6 @@ export const InputChat: FC<InputChatProps> = ({
               className="w-full block border-none outline-none text-right text-sm placeholder:text-gray-400"
               onKeyDown={handleKeyDown}
               autoFocus
-              disabled={status === 'loading'}
               onFocus={handleFocus}
             />
             <button className="group" disabled={status === 'loading'}>
