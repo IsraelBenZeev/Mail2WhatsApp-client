@@ -15,7 +15,6 @@ export const AppLayout = () => {
   const { get_token } = useTokens();
   const { user } = useUser();
 
-  // useEffect מאוחד לכל הלוגיקה
   useEffect(() => {
     const checkAuthAndNavigate = async () => {
       try {

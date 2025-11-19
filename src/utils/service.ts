@@ -30,13 +30,19 @@ export const sendMessage = async (
     console.error('Error sending message:', error);
   }
 };
-export const getMessages = async (userId: string,setMessages: Dispatch<React.SetStateAction<MessageType[]>>) => {
+export const getMessages = async (
+  userId: string,
+  setMessages: Dispatch<React.SetStateAction<MessageType[]>>,
+  setIsLoading: Dispatch<React.SetStateAction<boolean>>
+) => {
   try {
+    setIsLoading(true);
     const response = await axios.get<MessageType[]>(`${BASE_URL}/llm/get-messages/${userId}`);
     console.log('Fetched messages successfully:', response.data);
+    setIsLoading(false);
     setMessages(response.data);
     return response.data;
   } catch (error) {
     console.error('Error fetching messages:', error);
   }
-};  
+};
