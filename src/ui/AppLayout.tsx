@@ -30,10 +30,22 @@ export const AppLayout = () => {
       // 1. Check Session
       const { data, error } = await supabase.auth.getSession();
 
-      if (error || !data.session) {
+      // Check if we are handling an OAuth callback (hash or query params)
+      const isAuthCallback = window.location.hash.includes('access_token') ||
+        window.location.hash.includes('type=recovery') ||
+        window.location.search.includes('code=');
+
+      // If no session and NOT an auth callback, redirect to login
+      if ((error || !data.session) && !isAuthCallback) {
         if (location.pathname !== '/SignInOAuth') {
           navigate('/SignInOAuth');
         }
+        return;
+      }
+
+      // If we are in an auth callback but no session yet, we wait.
+      // Supabase will process the hash and eventually update the session.
+      if (!data.session && isAuthCallback) {
         return;
       }
 
@@ -55,8 +67,7 @@ export const AppLayout = () => {
             }
           }
         } else if (statusToken === 'failed') {
-          // Fallback for failed token check - maybe treat as no token?
-          // For now, per plan, if failed we might want to let them retry or go to access-gmail
+          // Fallback for failed token check
           if (location.pathname !== '/access-gmail-account') {
             navigate('/access-gmail-account');
           }
