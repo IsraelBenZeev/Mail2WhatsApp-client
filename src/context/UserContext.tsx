@@ -1,11 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  type FC,
-  type ReactNode,
-} from 'react';
+import { createContext, useContext, useEffect, useState, type FC, type ReactNode } from 'react';
 import { supabase } from '../utils/supabase-client';
 import { type Session } from '@supabase/supabase-js';
 type UserData = {
@@ -39,20 +32,19 @@ export const UserProvider: FC<{ children: ReactNode }> = ({ children }) => {
     return () => subscription.unsubscribe();
   }, []);
   useEffect(() => {
-    if (!session?.user) return;
-    setUser({
-      email: session.user.email || '',
-      id: session.user.id,
-      name: session.user.user_metadata?.full_name,
-      avatar_url: session.user.user_metadata?.avatar_url,
-    });
-    console.log("user from context: ",user);
-    
+    if (!session?.user) setUser(null);
+    else {
+      setUser({
+        email: session.user.email || '',
+        id: session.user.id,
+        name: session.user.user_metadata?.full_name,
+        avatar_url: session.user.user_metadata?.avatar_url,
+      });
+      console.log('user from context: ', user);
+    }
   }, [session]);
 
-  return (
-    <UserContext.Provider value={{ user }}>{children}</UserContext.Provider>
-  );
+  return <UserContext.Provider value={{ user }}>{children}</UserContext.Provider>;
 };
 
 export const useUser = () => useContext(UserContext);
