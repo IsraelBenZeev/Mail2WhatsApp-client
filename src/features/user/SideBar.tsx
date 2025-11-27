@@ -34,9 +34,18 @@ export const SideMenu: FC<SideMenuProps> = ({ toggleDrawer, open }) => {
   };
 
   const handleLogoutConfirm = async () => {
-    await signOut();
-    setShowLogoutPopup(false);
-    navigate(`/SignInOAuth`);
+    try {
+      
+      setShowLogoutPopup(false);
+      await signOut();
+      // המתן קצת כדי לוודא שהכל נוקה לפני ניווט
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      navigate(`/SignInOAuth`, { replace: true });
+    } catch (error) {
+      console.error('שגיאה בהתנתקות:', error);
+      // גם במקרה של שגיאה, ננסה לנווט לדף ההתחברות
+      navigate(`/SignInOAuth`, { replace: true });
+    }
   };
 
   const handleLogoutCancel = () => {
