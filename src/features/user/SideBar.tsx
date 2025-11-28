@@ -2,6 +2,7 @@ import { FaHome, FaInfoCircle, FaEnvelope, FaTimes, FaSignOutAlt } from 'react-i
 import { type FC, useEffect, useState } from 'react';
 import { useAuth } from '../../hooks/serviceAuth';
 import { useNavigate } from 'react-router-dom';
+import { TelegramButton } from '../../ui/TelegramButton';
 
 type SideMenuProps = {
   open: boolean;
@@ -35,7 +36,6 @@ export const SideMenu: FC<SideMenuProps> = ({ toggleDrawer, open }) => {
 
   const handleLogoutConfirm = async () => {
     try {
-      
       setShowLogoutPopup(false);
       await signOut();
       // המתן קצת כדי לוודא שהכל נוקה לפני ניווט
@@ -100,6 +100,7 @@ export const SideMenu: FC<SideMenuProps> = ({ toggleDrawer, open }) => {
               בית
             </span>
           </div>
+          <TelegramButton toggleDrawer={toggleDrawer} />
 
           {/* About */}
           <div

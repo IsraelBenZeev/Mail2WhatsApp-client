@@ -1,11 +1,15 @@
+// import { useNavigate } from 'react-router-dom';
 import { supabase } from '../utils/supabase-client';
+// import { use } from 'react';
+import { useUser } from '../context/UserContext';
 export const useAuth = () => {
+  const { isTokenOk } = useUser();
   const signInWithProvider = async (provider: 'google' | 'github' | 'facebook') => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: provider,
         options: {
-          redirectTo: `${import.meta.env.VITE_HOST}`,
+          redirectTo: isTokenOk ? `${import.meta.env.VITE_HOST_URL}/chat` : `${import.meta.env.VITE_HOST_URL}/access-gmail-account`,
         },
       });
 
@@ -17,13 +21,18 @@ export const useAuth = () => {
       console.error('Unexpected error:', err);
       return;
     }
+    // if (isTokenOk) {
+    //   navigate('/chat', { replace: true });
+    // } else {
+    //   navigate('/access_token', { replace: true });
+    // }
   };
 
   const signOut = async () => {
     try {
       // התנתקות מ-Supabase
       const { error } = await supabase.auth.signOut();
-      
+
       if (error) {
         console.error('שגיאה בהתנתקות:', error.message);
         throw error;
@@ -38,7 +47,7 @@ export const useAuth = () => {
           supabaseKeys.push(key);
         }
       }
-      
+
       // מחק את כל המפתחות של Supabase
       supabaseKeys.forEach((key) => {
         try {

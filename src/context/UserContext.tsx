@@ -1,6 +1,15 @@
-import { createContext, useContext, useEffect, useState, type FC, type ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type Dispatch,
+  type FC,
+  type ReactNode,
+} from 'react';
 import { supabase } from '../utils/supabase-client';
 import { type Session } from '@supabase/supabase-js';
+import { useTokens } from '../hooks/serviceTokens';
 type UserData = {
   email: string;
   name?: string;
@@ -10,15 +19,26 @@ type UserData = {
 
 type UserContextType = {
   user: UserData;
+  statusToken: 'idle' | 'loading' | 'success' | 'failed';
+  setStatusToken: Dispatch<React.SetStateAction<'idle' | 'loading' | 'success' | 'failed'>>;
+  isTokenOk: boolean;
+  setIsTokenOk: Dispatch<React.SetStateAction<boolean>>;
 };
 
 const UserContext = createContext<UserContextType>({
   user: null,
+  statusToken: 'idle',
+  setStatusToken: () => {},
+  isTokenOk: false,
+  setIsTokenOk: () => {},
 });
 
 export const UserProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<UserData>(null);
   const [session, setSession] = useState<Session | null>(null);
+  const [statusToken, setStatusToken] = useState<'idle' | 'loading' | 'success' | 'failed'>('idle');
+  const [isTokenOk, setIsTokenOk] = useState<boolean>(false);
+  const { get_token } = useTokens();
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       console.log('session: ', session);
@@ -43,8 +63,19 @@ export const UserProvider: FC<{ children: ReactNode }> = ({ children }) => {
       console.log('user from context: ', user);
     }
   }, [session]);
-
-  return <UserContext.Provider value={{ user }}>{children}</UserContext.Provider>;
+  useEffect(() => {
+    const tokensAccess = async () => {
+      if (!user) return;
+      const hasToken = await get_token(user.id, setStatusToken);
+      setIsTokenOk(hasToken || false);
+    };
+    tokensAccess();
+  }, [user]);
+  return (
+    <UserContext.Provider value={{ user, isTokenOk, statusToken, setStatusToken, setIsTokenOk }}>
+      {children}
+    </UserContext.Provider>
+  );
 };
 
 export const useUser = () => useContext(UserContext);

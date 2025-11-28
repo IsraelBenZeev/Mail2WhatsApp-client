@@ -1,11 +1,26 @@
-import { type FC } from 'react';
+import { type FC, useEffect } from 'react';
 import { FcGoogle } from 'react-icons/fc';
 import { FaGithub } from 'react-icons/fa';
 import { useAuth } from '../../hooks/serviceAuth';
+import { useUser } from '../../context/UserContext';
+import { useNavigate } from 'react-router-dom';
 
 export const SignInOAuth: FC = () => {
-  // const { user, initCurrentUser } = useUser();
+  const { user, isTokenOk, statusToken } = useUser();
   const { signInWithProvider } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user || statusToken === 'loading') return;
+
+    if (statusToken === 'success') {
+      if (isTokenOk) {
+        navigate('/chat', { replace: true });
+      } else {
+        navigate('/access-gmail-account', { replace: true });
+      }
+    }
+  }, [user, isTokenOk, statusToken, navigate]);
   return (
     <div className="w-full max-w-md">
       {/* כרטיס ההרשמה */}
@@ -27,7 +42,6 @@ export const SignInOAuth: FC = () => {
             <FcGoogle className="w-5 h-5" />
             המשך עם Google
           </button>
-
 
           {/* כפתור Apple */}
           {/* <button

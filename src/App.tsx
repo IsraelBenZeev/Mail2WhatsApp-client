@@ -1,35 +1,39 @@
-import { useEffect, type FC } from 'react';
+import { type FC } from 'react';
 import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom';
 
 import { AppLayout } from './ui/AppLayout';
 import { SignInOAuth } from './features/auth/SignInOAuth';
 import { Flip, ToastContainer } from 'react-toastify';
 import { BoxMessages } from './features/Chat/Chat';
-import { useUser } from './context/UserContext';
 import { AccessGmailAccount } from './features/user/AccessGmailAccount';
+import { ConnectionTelegram } from './ui/ConnectionTelegram';
 
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <AppLayout />,
-    children: [
-      { index: true, element: <Navigate to="/SignInOAuth" replace /> },
-      { path: '/SignInOAuth', element: <SignInOAuth /> },
-      { path: '/chat', element: <BoxMessages /> },
-      { path: '/access-gmail-account', element: <AccessGmailAccount /> },
-    ],
-  },
-]);
 export const App: FC = () => {
-  const { user } = useUser();
-  useEffect(() => {
-    console.log('VITE_HOST:', import.meta.env.VITE_HOST);
-
-  }, []);
-  useEffect(() => {
-    if (!user) return;
-    console.log('user: ', user);
-    }, [user]);
+  const router = createBrowserRouter([
+    {
+      path: '/',
+      element: <AppLayout />,
+      children: [
+        { index: true, element: <Navigate to="/SignInOAuth" replace /> },
+        {
+          path: '/SignInOAuth',
+          element: <SignInOAuth />,
+        },
+        {
+          path: '/chat',
+          element: <BoxMessages />,
+        },
+        {
+          path: '/access-gmail-account',
+          element: <AccessGmailAccount />,
+        },
+        {
+          path: '/connection-telegram',
+          element: <ConnectionTelegram />,
+        },
+      ],
+    },
+  ]);
   return (
     <>
       <RouterProvider router={router}></RouterProvider>
