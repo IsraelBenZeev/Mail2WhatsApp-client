@@ -1,8 +1,16 @@
-import { FaHome, FaInfoCircle, FaEnvelope, FaTimes, FaSignOutAlt } from 'react-icons/fa';
+import {
+  FaHome,
+  FaInfoCircle,
+  FaEnvelope,
+  FaTimes,
+  FaSignOutAlt,
+  FaRocketchat,
+} from 'react-icons/fa';
 import { type FC, useEffect, useState } from 'react';
 import { useAuth } from '../../hooks/serviceAuth';
 import { useNavigate } from 'react-router-dom';
 import { TelegramButton } from '../../ui/TelegramButton';
+import { ButtonSideBar } from '../../ui/ButtonSideBar';
 
 type SideMenuProps = {
   open: boolean;
@@ -88,33 +96,29 @@ export const SideMenu: FC<SideMenuProps> = ({ toggleDrawer, open }) => {
         {/* Menu Items */}
         <div className="flex flex-col gap-3 p-4">
           {/* Home */}
-          <div
-            onClick={(e) => {
-              e.stopPropagation();
-              toggleDrawer();
-            }}
-            className="flex items-center gap-3 px-4 py-3 border border-gray-700 rounded-lg bg-gray-800/50 hover:bg-blue-primary hover:border-blue-primary transition-all cursor-pointer group"
-          >
+          <ButtonSideBar toggleDrawer={toggleDrawer} navigateTo="/home">
             <FaHome className="text-lg text-blue-primary group-hover:text-white transition-colors" />
             <span className="text-sm font-medium text-right flex-1 text-gray-200 group-hover:text-white">
               בית
             </span>
-          </div>
+          </ButtonSideBar>
+          {/* Chat */}
+          <ButtonSideBar toggleDrawer={toggleDrawer} navigateTo="/chat">
+            <FaRocketchat className="text-lg text-blue-primary group-hover:text-white transition-colors" />
+            <span className="text-sm font-medium text-right flex-1 text-gray-200 group-hover:text-white">
+              צ'אט
+            </span>
+          </ButtonSideBar>
+          {/* Telegram */}
           <TelegramButton toggleDrawer={toggleDrawer} />
 
           {/* About */}
-          <div
-            onClick={(e) => {
-              e.stopPropagation();
-              toggleDrawer();
-            }}
-            className="flex items-center gap-3 px-4 py-3 border border-gray-700 rounded-lg bg-gray-800/50 hover:bg-blue-primary hover:border-blue-primary transition-all cursor-pointer group"
-          >
+          <ButtonSideBar toggleDrawer={toggleDrawer} navigateTo="/about">
             <FaInfoCircle className="text-lg text-blue-primary group-hover:text-white transition-colors" />
             <span className="text-sm font-medium text-right flex-1 text-gray-200 group-hover:text-white">
               אודות
             </span>
-          </div>
+          </ButtonSideBar>
 
           {/* Contact */}
           <div
