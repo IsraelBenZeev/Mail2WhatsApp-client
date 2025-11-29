@@ -6,7 +6,7 @@ import { SignInOAuth } from './features/auth/SignInOAuth';
 import { Flip, ToastContainer } from 'react-toastify';
 import { BoxMessages } from './features/Chat/Chat';
 import { AccessGmailAccount } from './features/user/AccessGmailAccount';
-import { ConnectionTelegram } from './ui/ConnectionTelegram';
+import { TelegramConnection } from './ui/TelegramConnection';
 
 export const App: FC = () => {
   const router = createBrowserRouter([
@@ -29,7 +29,7 @@ export const App: FC = () => {
         },
         {
           path: '/connection-telegram',
-          element: <ConnectionTelegram />,
+          element: <TelegramConnection />,
         },
       ],
     },
