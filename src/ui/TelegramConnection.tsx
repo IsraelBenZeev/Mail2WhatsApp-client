@@ -9,21 +9,23 @@ export const TelegramConnection: FC = () => {
   const [selectedHour, setSelectedHour] = useState<string>('09:00');
   const [isSaving, setIsSaving] = useState(false);
   const handleDisconnect = async () => {
-    // כאן תוכל להוסיף לוגיקה למחיקת ה-chat ID מהשרת
-    // לדוגמה: await deleteChatId(user?.id);
-    // setIsChatID(false);
     await delete_chat_id_from_DB(user?.id || '');
   };
 
   const handleSaveSchedule = async () => {
     setIsSaving(true);
     try {
-      // כאן תוכל להוסיף לוגיקה לשמירת השעה בשרת
       console.log('Saving schedule:', selectedHour);
-      await insert_time_to_DB(user?.id || '', selectedHour);
-      
+      const result = await insert_time_to_DB(user?.id || '', selectedHour);
+
+      if (result?.success) {
+        alert('השעה נשמרה בהצלחה!');
+      } else {
+        alert('שגיאה בשמירת השעה. נסה שוב.');
+      }
     } catch (error) {
       console.error('Error saving schedule:', error);
+      alert('שגיאה בשמירת השעה. נסה שוב.');
     } finally {
       setIsSaving(false);
     }

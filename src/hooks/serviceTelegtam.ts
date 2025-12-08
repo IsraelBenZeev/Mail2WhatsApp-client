@@ -21,7 +21,7 @@ export const useTelegram = () => {
       return null;
     }
     setStatusCheckChatID('success');
-    return data?.chat_id ? true : false
+    return data?.chat_id ? true : false;
   };
   const delete_chat_id_from_DB = async (userId: string) => {
     const { error } = await supabase.from('user_chat_ids').delete().eq('user_id', userId);
@@ -41,12 +41,13 @@ export const useTelegram = () => {
     now.setMilliseconds(0);
     const { data, error } = await supabase
       .from('user_chat_ids')
-      .update({ time: now.toISOString() })
+      .update({ time: timeValue })
       .eq('user_id', userId)
-      .is('name', null);
+      .select();
 
     if (error) {
       console.error('Error updating row:', error);
+      return { success: false, error };
     } else {
       console.log('Row updated:', data);
     }
