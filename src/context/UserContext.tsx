@@ -10,7 +10,7 @@ import {
 import { supabase } from '../utils/supabase-client';
 import { type Session } from '@supabase/supabase-js';
 import { useTokens } from '../hooks/serviceTokens';
-import { use_chat_ids } from '../hooks/serviceChatID';
+import { useTelegram } from '../hooks/serviceTelegtam';
 type UserData = {
   email: string;
   name?: string;
@@ -52,7 +52,7 @@ export const UserProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [statusToken, setStatusToken] = useState<'idle' | 'loading' | 'success' | 'failed'>('idle');
   const [isTokenOk, setIsTokenOk] = useState<boolean>(false);
   const { get_token } = useTokens();
-  const { get_chat_id } = use_chat_ids();
+  const { init_chat_id } = useTelegram();
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       console.log('session: ', session);
@@ -85,7 +85,7 @@ export const UserProvider: FC<{ children: ReactNode }> = ({ children }) => {
     };
     const chatIDAccess = async () => {
       if (!user) return;
-      const hasChatID = await get_chat_id(user.id, setStatusCheckChatID);
+      const hasChatID = await init_chat_id(user.id, setStatusCheckChatID);
       setIsChatID(hasChatID || false);
     };
     tokensAccess();
