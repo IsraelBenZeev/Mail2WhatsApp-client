@@ -28,6 +28,8 @@ type UserContextType = {
   statusCheckChatID: 'idle' | 'loading' | 'success' | 'failed';
   setStatusCheckChatID: Dispatch<React.SetStateAction<'idle' | 'loading' | 'success' | 'failed'>>;
   setIsChatID: Dispatch<React.SetStateAction<boolean>>;
+  hasTime: string;
+  setHasTime: Dispatch<React.SetStateAction<string>>;
 };
 
 const UserContext = createContext<UserContextType>({
@@ -40,6 +42,8 @@ const UserContext = createContext<UserContextType>({
   statusCheckChatID: 'idle',
   setStatusCheckChatID: () => {},
   setIsChatID: () => {},
+  hasTime: "",
+  setHasTime: () => {},
 });
 
 export const UserProvider: FC<{ children: ReactNode }> = ({ children }) => {
@@ -51,6 +55,7 @@ export const UserProvider: FC<{ children: ReactNode }> = ({ children }) => {
   >('idle');
   const [statusToken, setStatusToken] = useState<'idle' | 'loading' | 'success' | 'failed'>('idle');
   const [isTokenOk, setIsTokenOk] = useState<boolean>(false);
+  const [hasTime, setHasTime] = useState<string>("");
   const { get_token } = useTokens();
   const { init_chat_id } = useTelegram();
   useEffect(() => {
@@ -74,7 +79,6 @@ export const UserProvider: FC<{ children: ReactNode }> = ({ children }) => {
         name: session.user.user_metadata?.full_name,
         avatar_url: session.user.user_metadata?.avatar_url,
       });
-      console.log('user from context: ', user);
     }
   }, [session]);
   useEffect(() => {
@@ -88,9 +92,22 @@ export const UserProvider: FC<{ children: ReactNode }> = ({ children }) => {
       const hasChatID = await init_chat_id(user.id, setStatusCheckChatID);
       setIsChatID(hasChatID || false);
     };
+    const hasTime = async () => {
+      if (!user) return;
+      const { data, error } = await supabase
+        .from('user_chat_ids')
+        .select('time')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      if (error) {
+        console.log('Error fetching time: ', error);
+        return;
+      }
+      setHasTime(data?.time);
+    };
     tokensAccess();
     chatIDAccess();
-    console.log('isChatID: ', isChatID);
+    hasTime();
   }, [user]);
   return (
     <UserContext.Provider
@@ -104,6 +121,8 @@ export const UserProvider: FC<{ children: ReactNode }> = ({ children }) => {
         statusCheckChatID,
         setStatusCheckChatID,
         setIsChatID,
+        hasTime,
+        setHasTime,
       }}
     >
       {children}

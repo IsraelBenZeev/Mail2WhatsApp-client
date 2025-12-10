@@ -34,23 +34,24 @@ export const useTelegram = () => {
   const insert_time_to_DB = async (userId: string, time: string) => {
     const timeValue = time.trim();
     const [hour, minute] = timeValue.split(':').map(Number);
-    const now = new Date();
-    now.setHours(hour);
-    now.setMinutes(minute);
-    now.setSeconds(0);
-    now.setMilliseconds(0);
+    const timeForDb = `${hour.toString().padStart(2, '0')}:${minute
+      .toString()
+      .padStart(2, '0')}:00`;
     const { data, error } = await supabase
       .from('user_chat_ids')
-      .update({ time: timeValue })
+      .update({ time: timeForDb }) 
       .eq('user_id', userId)
       .select();
+      
 
     if (error) {
       console.error('Error updating row:', error);
-      return { success: false, error };
+      return;
     } else {
       console.log('Row updated:', data);
     }
+    return true
   };
+  
   return { init_chat_id, delete_chat_id_from_DB, insert_time_to_DB };
 };

@@ -1,33 +1,33 @@
-import { useState, type FC } from 'react';
+import { useEffect, useState, type FC } from 'react';
 import { FaTelegramPlane, FaClock, FaBell } from 'react-icons/fa';
 import { useUser } from '../context/UserContext';
 import { useTelegram } from '../hooks/serviceTelegtam';
 
 export const TelegramConnection: FC = () => {
-  const { user, isChatID } = useUser();
+  const { user, isChatID, hasTime, setHasTime } = useUser();
   const { delete_chat_id_from_DB, insert_time_to_DB } = useTelegram();
+
   const [selectedHour, setSelectedHour] = useState<string>('09:00');
-  const [isSaving, setIsSaving] = useState(false);
+  const [isEditingTime, setIsEditingTime] = useState<boolean>(false);
+  const [statusSaving, setStatusSaving] = useState<'idle' | 'saving' | 'success' | 'failed'>(
+    'idle'
+  );
+  useEffect(() => {
+    setHasTime(selectedHour);
+  }, [selectedHour]);
   const handleDisconnect = async () => {
     await delete_chat_id_from_DB(user?.id || '');
   };
+  console.log('hasTime: ', hasTime);
 
   const handleSaveSchedule = async () => {
-    setIsSaving(true);
-    try {
-      console.log('Saving schedule:', selectedHour);
-      const result = await insert_time_to_DB(user?.id || '', selectedHour);
-
-      if (result?.success) {
-        alert('השעה נשמרה בהצלחה!');
-      } else {
-        alert('שגיאה בשמירת השעה. נסה שוב.');
-      }
-    } catch (error) {
-      console.error('Error saving schedule:', error);
-      alert('שגיאה בשמירת השעה. נסה שוב.');
-    } finally {
-      setIsSaving(false);
+    setStatusSaving('saving');
+    const result = await insert_time_to_DB(user?.id || '', selectedHour);
+    if (result) {
+      setStatusSaving('success');
+      setIsEditingTime(false);
+    } else {
+      setStatusSaving('failed');
     }
   };
 
@@ -67,7 +67,6 @@ export const TelegramConnection: FC = () => {
           )}
         </div>
 
-        {/* אזור בחירת שעה - מוצג רק כשמחובר */}
         {isChatID && (
           <div className="mb-8 bg-gray-700/30 border border-gray-600 rounded-xl p-6">
             <div className="flex items-center justify-center gap-3 mb-4">
@@ -76,61 +75,76 @@ export const TelegramConnection: FC = () => {
             </div>
 
             <p className="text-gray-400 text-center mb-6">
-              בחר את השעה היומית בה תרצה לקבל את ההודעות מהבוט
+              {hasTime !== '' && !isEditingTime
+                ? `השעה הנוכחית היא ${selectedHour}`
+                : 'בחר את השעה היומית בה תרצה לקבל את ההודעות מהבוט'}
             </p>
 
-            <div className="flex flex-col items-center gap-4">
-              <div className="relative w-full max-w-xs">
-                <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                  <FaClock className="text-blue-primary text-xl" />
-                </div>
-                <select
-                  value={selectedHour}
-                  onChange={(e) => setSelectedHour(e.target.value)}
-                  className="w-full appearance-none bg-gray-800 border border-gray-600 text-white text-lg font-medium rounded-lg px-12 py-4 focus:outline-none focus:ring-2 focus:ring-blue-primary focus:border-transparent transition-all cursor-pointer hover:border-blue-primary/50"
-                  style={{ direction: 'rtl' }}
-                >
-                  {timeOptions.map((time) => (
-                    <option key={time} value={time} className="bg-gray-800">
-                      {time}
-                    </option>
-                  ))}
-                </select>
-                <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                  <svg
-                    className="w-5 h-5 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+            {(hasTime == null || isEditingTime) && (
+              <div className="flex flex-col items-center gap-4">
+                <div className="relative w-full max-w-xs">
+                  <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                    <FaClock className="text-blue-primary text-xl" />
+                  </div>
+                  <select
+                    value={selectedHour}
+                    onChange={(e) => setSelectedHour(e.target.value)}
+                    className="w-full appearance-none bg-gray-800 border border-gray-600 text-white text-lg font-medium rounded-lg px-12 py-4 focus:outline-none focus:ring-2 focus:ring-blue-primary focus:border-transparent transition-all cursor-pointer hover:border-blue-primary/50"
+                    style={{ direction: 'rtl' }}
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
+                    {timeOptions.map((time) => (
+                      <option key={time} value={time} className="bg-gray-800">
+                        {time}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                    <svg
+                      className="w-5 h-5 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </div>
                 </div>
-              </div>
 
-              <button
-                onClick={handleSaveSchedule}
-                disabled={isSaving}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-primary to-blue-secondary hover:from-blue-secondary hover:to-blue-primary text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg hover:shadow-blue-primary/30"
-              >
-                {isSaving ? (
-                  <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    <span>שומר...</span>
-                  </>
-                ) : (
-                  <>
-                    <FaBell className="text-lg" />
-                    <span>שמור הגדרות</span>
-                  </>
-                )}
-              </button>
-            </div>
+                <button
+                  onClick={handleSaveSchedule}
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-primary to-blue-secondary hover:from-blue-secondary hover:to-blue-primary text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg hover:shadow-blue-primary/30"
+                >
+                  {statusSaving === 'saving' ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                      <span>שומר...</span>
+                    </>
+                  ) : (
+                    <>
+                      <FaBell className="text-lg" />
+                      <span>שמור הגדרות</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
+
+            {hasTime && !isEditingTime && (
+              <div className="flex justify-center mt-4">
+                <button
+                  onClick={() => setIsEditingTime(true)}
+                  className="inline-flex items-center gap-2 px-6 py-2 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105"
+                >
+                  <FaClock />
+                  <span>ערוך שעה</span>
+                </button>
+              </div>
+            )}
           </div>
         )}
 
