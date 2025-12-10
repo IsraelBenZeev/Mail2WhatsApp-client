@@ -7,11 +7,17 @@ export const TelegramConnection: FC = () => {
   const { user, isChatID, hasTime, setHasTime } = useUser();
   const { delete_chat_id_from_DB, insert_time_to_DB } = useTelegram();
 
-  const [selectedHour, setSelectedHour] = useState<string>('09:00');
+  const [selectedHour, setSelectedHour] = useState<string>('');
+
   const [isEditingTime, setIsEditingTime] = useState<boolean>(false);
   const [statusSaving, setStatusSaving] = useState<'idle' | 'saving' | 'success' | 'failed'>(
     'idle'
   );
+  useEffect(() => {
+    if (hasTime) {
+      setSelectedHour(hasTime);
+    }
+  }, [hasTime]);
   useEffect(() => {
     setHasTime(selectedHour);
   }, [selectedHour]);
@@ -76,7 +82,7 @@ export const TelegramConnection: FC = () => {
 
             <p className="text-gray-400 text-center mb-6">
               {hasTime !== '' && !isEditingTime
-                ? `השעה הנוכחית היא ${selectedHour}`
+                ? `השעה הנוכחית היא ${selectedHour.slice(0, 5)}`
                 : 'בחר את השעה היומית בה תרצה לקבל את ההודעות מהבוט'}
             </p>
 

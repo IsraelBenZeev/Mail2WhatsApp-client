@@ -1,10 +1,43 @@
 import type { FC } from 'react';
 import { useTokens } from '../../hooks/serviceTokens';
-import {  MdSecurity, MdLock, MdCheckCircle } from 'react-icons/md';
+import { MdSecurity, MdLock, MdCheckCircle } from 'react-icons/md';
+import { useUser } from '../../context/UserContext';
+import { useNavigate } from 'react-router-dom';
+import { FiCheckCircle, FiMessageSquare } from 'react-icons/fi';
 
 export const AccessGmailAccount: FC = () => {
   const { authorize_user_and_save_tokens } = useTokens();
+  const { isTokenOk } = useUser();
+  const navigate = useNavigate();
+  console.log('isTokenOk: ', isTokenOk);
 
+  if (isTokenOk) {
+    return (
+      <div className="h-full flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-4">
+        <div className="bg-gray-800 rounded-2xl shadow-2xl p-8 border border-gray-700 text-center max-w-md">
+          <div className="mb-6 flex justify-center">
+            <div className="bg-green-500/20 p-6 rounded-full">
+              <FiCheckCircle className="w-16 h-16 text-green-500" />
+            </div>
+          </div>
+
+          <h1 className="text-3xl font-bold text-white mb-4">הגישה לחשבון הג'ימייל כבר אושרה</h1>
+
+          <p className="text-gray-400 mb-8 text-lg">
+            אין צורך לאשר את הגישה שוב. תוכל להמשיך להשתמש בשירות.
+          </p>
+
+          <button
+            onClick={() => navigate('/chat')}
+            className="w-full bg-blue-primary hover:bg-blue-secondary text-white font-semibold py-4 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-3 transform hover:scale-105"
+          >
+            <FiMessageSquare className="w-5 h-5" />
+            <span>המשך לצ'אט</span>
+          </button>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="h-full flex flex-col items-center justify-start md:justify-center  bg-gradient-to-br from-blue-50 to-blue-100 p-4 md:p-6 py-8 overflow-y-auto">
       <div className="w-full max-w-md sm:max-w-2xl bg-white rounded-2xl shadow-2xl p-4 sm:p-6 md:p-10">
@@ -24,9 +57,8 @@ export const AccessGmailAccount: FC = () => {
                 הנתונים שלך מאובטחים
               </h3>
               <p className="text-gray-700 text-xs sm:text-sm leading-relaxed">
-                אנחנו משתמשים בפרוטוקול OAuth 2.0 המאובטח של Google. איננו
-                שומרים את סיסמת המייל שלך, ויש לנו גישה מוגבלת בלבד לנתונים
-                הנדרשים לשירות.
+                אנחנו משתמשים בפרוטוקול OAuth 2.0 המאובטח של Google. איננו שומרים את סיסמת המייל
+                שלך, ויש לנו גישה מוגבלת בלבד לנתונים הנדרשים לשירות.
               </p>
             </div>
           </div>
@@ -39,15 +71,10 @@ export const AccessGmailAccount: FC = () => {
             למה אנחנו צריכים גישה?
           </h3>
           <ul className="space-y-2">
-            {[
-              'קריאת הודעות מתיבת הדואר שלך',
-              'שליחת עדכונים על הודעות חדשות',
-            ].map((text, i) => (
+            {['קריאת הודעות מתיבת הדואר שלך', 'שליחת עדכונים על הודעות חדשות'].map((text, i) => (
               <li key={i} className="flex items-start gap-3">
                 <MdCheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                <span className="text-gray-700 text-sm sm:text-base">
-                  {text}
-                </span>
+                <span className="text-gray-700 text-sm sm:text-base">{text}</span>
               </li>
             ))}
           </ul>
@@ -56,8 +83,8 @@ export const AccessGmailAccount: FC = () => {
         {/* Privacy Notice */}
         <div className="bg-gray-50 rounded-xl p-3 sm:p-5 border border-gray-200 mb-6">
           <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
-            <span className="font-semibold text-gray-800">הערה חשובה:</span>{' '}
-            ניתן לבטל את הגישה בכל עת דרך{' '}
+            <span className="font-semibold text-gray-800">הערה חשובה:</span> ניתן לבטל את הגישה בכל
+            עת דרך{' '}
             <a
               href="https://myaccount.google.com/permissions"
               target="_blank"
@@ -66,8 +93,8 @@ export const AccessGmailAccount: FC = () => {
             >
               הגדרות חשבון Google שלך
             </a>
-            . אנחנו לא משתפים את המידע שלך עם צדדים שלישיים ופועלים בהתאם
-            למדיניות הפרטיות של Google.
+            . אנחנו לא משתפים את המידע שלך עם צדדים שלישיים ופועלים בהתאם למדיניות הפרטיות של
+            Google.
           </p>
         </div>
 
